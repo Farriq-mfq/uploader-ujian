@@ -17,6 +17,8 @@ class timeRanges implements ValidationRule
     {
         if($value[1] == null){
             $fail("waktu habis harus di isi");
+        }else if(strtotime($value[0])<strtotime(date("Y-m-d H:i:s"))){
+            $fail("Waktu harus lebih dari waktu sekarang");
         }
     }
 }
