@@ -9,7 +9,7 @@ class Room extends Model
 {
     use HasFactory;
     protected $fillable = ['name', 'time_start', 'time_end', 'ip_start', 'ip_end', 'folder', 'status', "extensions"];
-    protected $guarded = ['id'];
+    // protected $guarded = ['id'];
 
     public function scopeActive($query, $value)
     {

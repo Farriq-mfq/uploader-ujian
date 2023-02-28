@@ -3,16 +3,17 @@
         <div class="mb-3">
             <Link :href="$route('rooms.create')" class="btn btn-primary">Buat rooms</Link>
         </div>
-        <div class="mb-3">
+        <div class="mb-3" v-if="rooms.data.length">
             <input v-model="keyword" type="search" placeholder="Cari nama rooms"
                 class="input input-bordered w-full max-w-xs" />
         </div>
-        <div class="mb-3 btn-group-horizontal space-x-2 ">
+        <div class="mb-3 btn-group-horizontal space-x-2" v-if="rooms.data.length">
             <button @click="handleBatchRemove" type="button" class="btn btn-error">Hapus Semua</button>
-            <button class="btn btn-secondary">Active Semua</button>
+            <button class="btn btn-accent" type="button" @click="handleActiveAll">Active Semua</button>
+            <button class="btn btn-secondary" type="button" @click="handleInActiveAll">Inactive Semua</button>
         </div>
-        <div class="overflow-x-auto w-full card shadow-xl">
-            <table class="table w-full" v-if="rooms.length">
+        <div class="overflow-x-auto w-full card shadow-xl p-2">
+            <table class="table w-full" v-if="rooms.data.length">
                 <!-- head -->
                 <thead>
                     <tr>
@@ -26,7 +27,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="room in rooms" :key="room.id">
+                    <tr v-for="room in rooms.data" :key="room.id">
 
                         <td>
                             {{ room.name }}
@@ -41,7 +42,9 @@
                             {{ room.folder }}
                         </td>
                         <td>
-                            {{ room.extensions }}
+                            <div class="badge badge-primary mx-1 font-bold p-3" v-for="(ext, index) in room.extensions.split(',')"
+                                :key="index">
+                                {{ ext }}</div>
                         </td>
                         <td>
                             <button class="btn bg-transparent border-0 hover:bg-transparent">
@@ -50,25 +53,27 @@
                             </button>
                         </td>
                         <th class="btn-group-horizontal space-x-2">
-                            <button class="btn btn-info">Edit</button>
+                            <Link :href="$route('rooms.edit', room.id)" as="button" class="btn btn-info">Edit</Link>
                             <button class="btn btn-error">Delete</button>
                         </th>
                     </tr>
                 </tbody>
             </table>
-            <p class="text-center py-4" v-if="rooms.length === 0">Rooms tidak ada</p>
+            <Pagintion v-if="rooms.data.length" :links="rooms.links" />
         </div>
+        <p class="text-center py-4" v-if="rooms.data.length === 0">Rooms tidak ada</p>
     </div>
 </template>
 <script>
 import { Link } from '@inertiajs/vue3';
 import BaseLayout from '../../Layouts/BaseLayout.vue';
 import Swal from 'sweetalert2'
+import Pagintion from "../../components/Pagination.vue"
 export default {
     layout: BaseLayout,
-    components: { Link, },
+    components: { Link, Pagintion },
     props: {
-        rooms: Array
+        rooms: Object
     },
     data() {
         return {
@@ -84,6 +89,7 @@ export default {
             }
         }
     },
+
     methods: {
         handleBatchRemove() {
             Swal.fire({
@@ -97,12 +103,37 @@ export default {
                 cancelButtonText: "Batalkan"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    this.$inertia.post(this.$route('rooms.batch_remove'), {}, { preserveState: true })
-                    // Swal.fire(
-                    //     'Deleted!',
-                    //     'Your file has been deleted.',
-                    //     'success'
-                    // )
+                    this.$inertia.post(this.$route('rooms.batch_remove'), {}, {
+                        preserveState: true, onSuccess: () => {
+                            Swal.fire(
+                                'Berhasil!',
+                                'Berhasil menghapus semua rooms.',
+                                'success'
+                            )
+                        }
+                    })
+                }
+            })
+        },
+        handleActiveAll() {
+            this.$inertia.post(this.$route('rooms.batch_active'), {}, {
+                preserveState: true, onSuccess: () => {
+                    Swal.fire(
+                        'Berhasil!',
+                        'Berhasil mengaktifkan semua rooms.',
+                        'success'
+                    )
+                }
+            })
+        },
+        handleInActiveAll() {
+            this.$inertia.post(this.$route('rooms.batch_inactive'), {}, {
+                preserveState: true, onSuccess: () => {
+                    Swal.fire(
+                        'Berhasil!',
+                        'Berhasil menonaktifkan semua rooms.',
+                        'success'
+                    )
                 }
             })
         }

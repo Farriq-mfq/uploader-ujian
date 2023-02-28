@@ -133,11 +133,7 @@ export default {
             this.form.post(this.$route('rooms.store'), {
                 preserveState: true,
                 preserveScroll: true,
-                onSuccess: async (data) => {
-                    this.copyUrl = `${this.baseUrl}/uploader/${this.form.name}`
-                    this.toast.success("Berhasil membuat rooms");
-                    this.form.reset("name", "TimeRanges", "IpEnd", "IpStart", "extensions", "folder", "status")
-                    this.form.clearErrors()
+                onSuccess: async () => {
                     const timer = setInterval(() => {
                         this.timer--;
                         if (this.timer < 1) {
@@ -145,6 +141,10 @@ export default {
                             this.copyUrl = ""
                         }
                     }, this.timer * 1000)
+                    this.copyUrl = `${this.baseUrl}/uploader/${this.form.name}`
+                    this.toast.success("Berhasil membuat rooms");
+                    this.form.reset("name", "TimeRanges", "IpEnd", "IpStart", "extensions", "folder", "status")
+                    this.form.clearErrors()
                 },
             })
         },
