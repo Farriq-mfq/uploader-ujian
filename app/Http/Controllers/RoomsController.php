@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\RoomsRequest;
 use App\Models\Room;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
+
 
 class RoomsController extends Controller
 {

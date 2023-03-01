@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoomsController;
+use App\Http\Controllers\UploaderController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -24,3 +25,7 @@ Route::prefix('rooms')->group(function () {
     // Route::post('/active');
 });
 Route::resource('rooms', RoomsController::class);
+
+Route::prefix('/uploader')->group(function () {
+    Route::get('/{room}', [UploaderController::class, 'index']);
+});

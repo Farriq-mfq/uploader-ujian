@@ -1,5 +1,6 @@
 <template>
-    <div class="">
+    <div>
+
         <div class="mb-3">
             <Link :href="$route('rooms.create')" class="btn btn-primary">Buat rooms</Link>
         </div>
@@ -42,8 +43,8 @@
                             {{ room.folder }}
                         </td>
                         <td>
-                            <div class="badge badge-primary mx-1 font-bold p-3" v-for="(ext, index) in room.extensions.split(',')"
-                                :key="index">
+                            <div class="badge badge-primary mx-1 font-bold p-3"
+                                v-for="(ext, index) in room.extensions.split(',')" :key="index">
                                 {{ ext }}</div>
                         </td>
                         <td>
