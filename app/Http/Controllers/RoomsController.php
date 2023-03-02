@@ -103,7 +103,7 @@ class RoomsController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $this->room->where('id', $id)->delete();
     }
 
 
@@ -130,5 +130,16 @@ class RoomsController extends Controller
     public function batch_inactive()
     {
         $this->room->where('id', ">", 0)->update(['status' => false]);
+    }
+
+    /**
+     * @param string $id
+     */
+    public function active($id)
+    {
+        $room = $this->room->select('status')->find($id);
+        if ($room != null) {
+            $this->room->active($room->status, $id);
+        }
     }
 }

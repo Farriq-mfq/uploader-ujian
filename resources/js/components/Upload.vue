@@ -1,9 +1,12 @@
 <template>
     <div class="grid gap-3">
         <div v-bind="getRootProps()"
-            :class="`w-full h-64 flex border-2 border-dashed border-gray-300 justify-center items-center ${isDragActive ? `bg-blue-100` : ``}`">
+            :class="`w-full h-64 flex border-2 border-dashed border-gray-300 justify-center items-center rounded-lg ${isDragActive ? `bg-blue-100` : ``}`">
             <input v-bind="getInputProps()" />
-            <p class="text-center text-gray-500 font-semibold leading-tight" v-if="isDragActive">Letakan disini ...</p>
+            <div v-if="isDragActive" class="grid place-items-center first-letter gap-2">
+                <FolderOpenIcon class="text-blue-500 h-24" />
+                <p class="text-center text-gray-500 font-semibold divider">Letakan disini ...</p>
+            </div>
             <div v-else class="grid place-items-center first-letter gap-2">
                 <CloudArrowUpIcon class="text-blue-500 h-24" />
                 <p class=" text-center text-gray-500 font-semibold leading-tight">Drag 'n' drop disini, atau <br><span
@@ -21,16 +24,17 @@
 </template>
 <script>
 import { useDropzone } from "vue3-dropzone";
-import { CloudArrowUpIcon } from '@heroicons/vue/24/solid'
+import { CloudArrowUpIcon,FolderOpenIcon } from '@heroicons/vue/24/solid';
+
 export default {
-    components: { CloudArrowUpIcon },
-    setup() {
+    components: { CloudArrowUpIcon,FolderOpenIcon },
+    setup(props, ctx) {
         function onDrop(acceptFiles, rejectReasons) {
-            console.log(acceptFiles);
-            console.log(rejectReasons);
+            console.log(acceptFiles)
+            ctx.emit("setFile", acceptFiles)
         }
 
-        const { getRootProps, getInputProps, ...rest } = useDropzone({ onDrop });
+        const { getRootProps, getInputProps, ...rest } = useDropzone({ onDrop, multiple: false });
 
         return {
             getRootProps,

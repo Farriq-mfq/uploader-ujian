@@ -11,8 +11,8 @@ class Room extends Model
     protected $fillable = ['name', 'time_start', 'time_end', 'ip_start', 'ip_end', 'folder', 'status', "extensions"];
     // protected $guarded = ['id'];
 
-    public function scopeActive($query, $value)
+    public function scopeActive($query, $status, $id)
     {
-        return $query->update(['status' => $value], $value);
+        return $query->where('id', $id)->update(['status' => !$status]);
     }
 }

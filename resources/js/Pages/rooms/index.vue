@@ -48,14 +48,15 @@
                                 {{ ext }}</div>
                         </td>
                         <td>
-                            <button class="btn bg-transparent border-0 hover:bg-transparent">
+                            <button class="btn bg-transparent border-0 hover:bg-transparent"
+                                @click="handleToggleActive(room.id)" type="button">
                                 <div class="badge badge-success gap-2" v-if="room.status">Active</div>
                                 <div class="badge badge-error gap-2" v-if="!room.status">Inactive</div>
                             </button>
                         </td>
                         <th class="btn-group-horizontal space-x-2">
                             <Link :href="$route('rooms.edit', room.id)" as="button" class="btn btn-info">Edit</Link>
-                            <button class="btn btn-error">Delete</button>
+                            <button class="btn btn-error" type="button" @click="handleDelete(room.id)">Delete</button>
                         </th>
                     </tr>
                 </tbody>
@@ -137,6 +138,35 @@ export default {
                     )
                 }
             })
+        },
+
+        handleDelete(id) {
+            Swal.fire({
+                title: 'Yakin ?',
+                text: "Ingin menghapus data ini !",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya hapus aja !',
+                cancelButtonText: "Batalkan"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.$inertia.delete(this.$route('rooms.destroy', id), {}, {
+                        preserveState: true, preserveScroll: true, onSuccess: () => {
+                            Swal.fire(
+                                'Berhasil!',
+                                'Berhasil menghapus rooms.',
+                                'success'
+                            )
+                        }
+                    })
+                }
+            })
+        },
+
+        handleToggleActive(id) {
+            this.$inertia.post(this.$route('rooms.active', id), {}, { preserveState: true, preserveScroll: true })
         }
     }
 }

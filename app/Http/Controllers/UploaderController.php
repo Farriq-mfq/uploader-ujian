@@ -11,4 +11,9 @@ class UploaderController extends Controller
     {
         return Inertia::render('uploader/index');
     }
+
+    public function upload(Request $request)
+    {
+        dd($request->file);
+    }
 }
