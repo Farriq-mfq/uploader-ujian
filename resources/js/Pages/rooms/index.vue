@@ -75,7 +75,7 @@ export default {
     layout: BaseLayout,
     components: { Link, Pagintion },
     props: {
-        rooms: Object
+        rooms: Array
     },
     data() {
         return {

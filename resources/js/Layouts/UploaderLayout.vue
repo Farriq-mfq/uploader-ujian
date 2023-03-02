@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen container mx-auto lg:px-0 px-3 py-3">
+    <div class="min-h-screen container mx-auto lg:px-0 px-3 py-5">
         <!-- <div class="w-full top-0 left-0" ref="navbar">
             <div class="navbar bg-slate-800 shadow-xl text-white flex justify-between">
                 <a class="btn btn-ghost normal-case text-xl">UPLOADER</a>

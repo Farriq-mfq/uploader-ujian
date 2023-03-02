@@ -30,11 +30,10 @@ export default {
     components: { CloudArrowUpIcon,FolderOpenIcon },
     setup(props, ctx) {
         function onDrop(acceptFiles, rejectReasons) {
-            console.log(acceptFiles)
             ctx.emit("setFile", acceptFiles)
         }
 
-        const { getRootProps, getInputProps, ...rest } = useDropzone({ onDrop, multiple: false });
+        const { getRootProps, getInputProps, ...rest } = useDropzone({ onDrop, multiple: true });
 
         return {
             getRootProps,

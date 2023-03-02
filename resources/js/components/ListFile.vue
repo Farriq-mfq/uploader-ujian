@@ -1,8 +1,9 @@
 <template >
     <li
-        class="w-full bg-white group  rounded-lg border p-2 border-gray-300 flex space-x-2 relative items-center z-10 overflow-hidden">
+        class="w-full bg-white group  rounded-lg border p-2 border-gray-300 flex space-x-2 relative items-center z-10 overflow-hidden my-2">
         <FolderIcon class="h-5 text-slate-900" />
-        <span class="text-sm font-bold flex-1">{{ name }} ({{ formatSize }})</span>
+        <div class="text-sm font-bold flex-1"><span>{{ name }}</span> ({{ formatSize
+        }})</div>
         <button type="button" class="absolute right-3" @click="$emit('removeFile')" v-if="!progress">
             <XMarkIcon class="text-red-500 h-5" v-if="!loading" />
         </button>

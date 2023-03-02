@@ -18,6 +18,8 @@ return new class extends Migration
             $table->timestamp('time_end')->default(date("Y-m-d H:i:s"));
             $table->string('ip_start');
             $table->string('ip_end');
+            $table->string("kelas");
+            $table->string("mata_kuliah");
             $table->string('folder', 50);
             $table->string('extensions');
             $table->boolean('status')->default(false);

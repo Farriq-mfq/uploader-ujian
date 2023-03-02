@@ -27,6 +27,7 @@ Route::prefix('rooms')->group(function () {
 Route::resource('rooms', RoomsController::class);
 
 Route::prefix('/uploader')->group(function () {
-    Route::get('/{room}', [UploaderController::class, 'index']);
     Route::post('/{room}', [UploaderController::class, 'upload'])->name('uploader.upload');
 });
+// room route
+Route::get('/{room}', [UploaderController::class, 'index'])->middleware('ip_allow');
