@@ -20,7 +20,8 @@
                     <tr>
                         <th>Rooms name</th>
                         <th>Waktu</th>
-                        <th>Jangkauan Ip</th>
+                        <th>Kelas</th>
+                        <th>Mata Kuliah</th>
                         <th>Nama Folder</th>
                         <th>Extension yang di izinkan</th>
                         <th>status</th>
@@ -37,7 +38,10 @@
                             {{ room.time_start }} - {{ room.time_end }}
                         </td>
                         <td>
-                            {{ room.ip_start }} - {{ room.ip_end }}
+                            {{ room.kelas }}
+                        </td>
+                        <td>
+                            {{ room.mata_kuliah }}
                         </td>
                         <td>
                             {{ room.folder }}
@@ -57,6 +61,8 @@
                         <th class="btn-group-horizontal space-x-2">
                             <Link :href="$route('rooms.edit', room.id)" as="button" class="btn btn-info">Edit</Link>
                             <button class="btn btn-error" type="button" @click="handleDelete(room.id)">Delete</button>
+                            <button class="btn btn-primary" type="button"
+                                @click="handleCopy($route('uploader.index', room.name))">Copy</button>
                         </th>
                     </tr>
                 </tbody>
@@ -90,6 +96,20 @@ export default {
                 this.$inertia.get(this.$route('rooms.index'), {}, { preserveScroll: true, preserveState: true })
             }
         }
+    },
+    setup() {
+        const toast = Swal.mixin({
+            toast: true,
+            position: 'top-right',
+            iconColor: 'white',
+            customClass: {
+                popup: 'colored-toast'
+            },
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+        })
+        return { toast }
     },
 
     methods: {
@@ -167,6 +187,14 @@ export default {
 
         handleToggleActive(id) {
             this.$inertia.post(this.$route('rooms.active', id), {}, { preserveState: true, preserveScroll: true })
+        },
+        async handleCopy(url) {
+            try {
+                await navigator.clipboard.writeText(url)
+                this.toast.fire("Copy URL berhasil")
+            } catch (e) {
+                this.toast.fire("Copy URL gagal")
+            }
         }
     }
 }

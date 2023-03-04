@@ -44,6 +44,22 @@
                 <p class="text-red-500 text-sm" v-if="form.errors.folder">{{ form.errors.folder }}</p>
             </div>
             <div class="form-control w-full">
+                <label class="label">
+                    <span class="label-text">Kelas</span>
+                </label>
+                <input type="text" v-model="form.kelas" placeholder="Masukan Nama kelas"
+                    class="input input-bordered w-full" />
+                <p class="text-red-500 text-sm" v-if="form.errors.kelas">{{ form.errors.kelas }}</p>
+            </div>
+            <div class="form-control w-full">
+                <label class="label">
+                    <span class="label-text">Mata Kuliah</span>
+                </label>
+                <input type="text" v-model="form.mata_kuliah" placeholder="Masukan Nama Mata Kuliah"
+                    class="input input-bordered w-full" />
+                <p class="text-red-500 text-sm" v-if="form.errors.mata_kuliah">{{ form.errors.mata_kuliah }}</p>
+            </div>
+            <div class="form-control w-full">
                 <label class="label ">
                     <span class="label-text">Option Extensions note:pisahkan dengan (,)</span>
                 </label>
@@ -112,6 +128,8 @@ export default {
                 IpEnd: null,
                 folder: null,
                 status: false,
+                kelas: null,
+                mata_kuliah: null,
                 extensions: null
             }),
             copyUrl: "",
@@ -126,6 +144,8 @@ export default {
         this.form.folder = this.room.folder
         this.form.status = this.room.status == 1 ? true : false
         this.form.extensions = this.room.extensions
+        this.form.kelas = this.room.kelas
+        this.form.mata_kuliah = this.room.mata_kuliah
     },
     methods: {
         async handleSubmit() {

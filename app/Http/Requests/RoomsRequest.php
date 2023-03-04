@@ -34,6 +34,8 @@ class RoomsRequest extends FormRequest
                 new IpRanges($this->IpStart)
             ],
             'folder' => 'required|regex:/^\S*/',
+            'kelas' => 'required',
+            'mata_kuliah' => 'required',
             'extensions' => 'required|regex:/\.(\w)+/',
         ];
     }
@@ -53,6 +55,8 @@ class RoomsRequest extends FormRequest
             'folder.required' => "nama folder harus di isi",
             "extensions.required" => "Extension yang di izinkan harus di isi",
             'name.unique' => "nama sudah di gunakan",
+            'kelas.required' => "Kelas harus di isi",
+            'mata_kuliah.required' => "Mata Kuliah harus di isi",
             'extensions.regex' => "extensions tidak valid"
         ];
     }

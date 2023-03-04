@@ -31,17 +31,9 @@
                 </div>
                 <div class="form-control w-full">
                     <label class="label">
-                        <span class="label-text">Range IP</span>
+                        <span class="label-text">IP yang di izinkan {{ form.ip.length }}</span>
                     </label>
-                    <div class="lg:columns-2 space-y-2 lg:space-y-0">
-
-                        <input type="text" v-model="form.IpStart" placeholder="Masukan IP awal"
-                            class="input input-bordered w-full" />
-                        <p class="text-red-500 text-sm" v-if="form.errors.IpStart">{{ form.errors.IpStart }}</p>
-                        <input type="text" v-model="form.IpEnd" placeholder="Masukan IP akhir"
-                            class="input input-bordered w-full" />
-                        <p class="text-red-500 text-sm" v-if="form.errors.IpEnd">{{ form.errors.IpEnd }}</p>
-                    </div>
+                    <ModalIp @submit-ip="handleSumbmitIp" />
                 </div>
                 <div class="form-control w-full">
                     <label class="label">
@@ -50,6 +42,22 @@
                     <input type="text" v-model="form.folder" placeholder="Masukan Nama Folder"
                         class="input input-bordered w-full" />
                     <p class="text-red-500 text-sm" v-if="form.errors.folder">{{ form.errors.folder }}</p>
+                </div>
+                <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">Kelas</span>
+                    </label>
+                    <input type="text" v-model="form.kelas" placeholder="Masukan Nama kelas"
+                        class="input input-bordered w-full" />
+                    <p class="text-red-500 text-sm" v-if="form.errors.kelas">{{ form.errors.kelas }}</p>
+                </div>
+                <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">Mata Kuliah</span>
+                    </label>
+                    <input type="text" v-model="form.mata_kuliah" placeholder="Masukan Nama Mata Kuliah"
+                        class="input input-bordered w-full" />
+                    <p class="text-red-500 text-sm" v-if="form.errors.mata_kuliah">{{ form.errors.mata_kuliah }}</p>
                 </div>
                 <div class="form-control w-full">
                     <label class="label ">
@@ -81,12 +89,14 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import { MinusIcon, PlusIcon } from '@heroicons/vue/24/solid'
 import { useForm } from '@inertiajs/vue3';
 import { useToast } from "vue-toastification";
+import ModalIp from '../../components/ModalIp.vue';
+
 export default {
     layout: BaseLayout,
     components: {
         VueDatePicker,
         PlusIcon,
-        MinusIcon,
+        MinusIcon, ModalIp
     },
     computed: {
         toast() {
@@ -118,11 +128,12 @@ export default {
             form: useForm({
                 name: null,
                 TimeRanges: null,
-                IpStart: null,
-                IpEnd: null,
                 folder: null,
+                kelas: null,
+                mata_kuliah: null,
                 status: false,
-                extensions: null
+                extensions: null,
+                ip: []
             }),
             copyUrl: "",
             timer: 3
@@ -156,6 +167,10 @@ export default {
             } catch (e) {
                 this.toast.error("Copy url gagal")
             }
+        },
+        handleSumbmitIp(ips) {
+            console.log(ips)
+            this.form.ip = ips
         }
     }
 

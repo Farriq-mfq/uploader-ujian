@@ -30,4 +30,4 @@ Route::prefix('/uploader')->group(function () {
     Route::post('/{room}', [UploaderController::class, 'upload'])->name('uploader.upload');
 });
 // room route
-Route::get('/{room}', [UploaderController::class, 'index'])->middleware('ip_allow');
+Route::get('/{room}', [UploaderController::class, 'index'])->name('uploader.index')->middleware('ip_allow');

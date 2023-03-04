@@ -16,8 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->timestamp('time_start')->default(date("Y-m-d H:i:s"));
             $table->timestamp('time_end')->default(date("Y-m-d H:i:s"));
-            $table->string('ip_start');
-            $table->string('ip_end');
             $table->string("kelas");
             $table->string("mata_kuliah");
             $table->string('folder', 50);

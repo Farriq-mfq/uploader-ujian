@@ -56,6 +56,8 @@ class RoomsController extends Controller
             "ip_start" => $request->IpStart,
             "ip_end" => $request->IpEnd,
             "folder" => $request->folder,
+            'kelas' => $request->kelas,
+            'mata_kuliah' => $request->mata_kuliah,
             "status" => $request->status,
             "extensions" => $request->extensions,
         ];
@@ -91,6 +93,8 @@ class RoomsController extends Controller
             "time_end" => $times[1],
             "ip_start" => $request->IpStart,
             "ip_end" => $request->IpEnd,
+            'kelas' => $request->kelas,
+            'mata_kuliah' => $request->mata_kuliah,
             "folder" => $request->folder,
             "status" => $request->status,
             "extensions" => $request->extensions,

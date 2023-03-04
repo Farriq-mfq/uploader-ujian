@@ -3,6 +3,7 @@
         <div class="max-w-xl bg-white w-full shadow-sm rounded-lg p-3 border flex items-center space-x-2">
             <FaceFrownIcon class="h-20 text-blue-500" />
             <span class="font-bold text-lg">Maaf room tidak ditemukan</span>
+            <img :src="random" />
         </div>
     </div>
 
@@ -13,7 +14,7 @@
         </div>
     </div>
 
-    <div class="mockup-window relative bg-blue-500 bg-opacity-10 shadow-lg" v-if="room && !startTime">
+    <div class="mockup-window relative bg-blue-500 bg-opacity-5 shadow" v-if="room && !startTime">
         <div
             class="shadow-lg text-4xl font-semibold text-gray-700 justify-self-center bg-blue-500 bg-opacity-25 border w-fit absolute lg:top-14 top-0 lg:right-5 right-0 grid place-items-center gap-2 rounded-lg">
             <div
@@ -103,6 +104,7 @@ import { ConvertDate } from '../../helper/convertDate';
 import UploaderLayout from '../../Layouts/UploaderLayout.vue';
 import { router } from '@inertiajs/inertia-vue3'
 import { FaceFrownIcon } from '@heroicons/vue/24/solid'
+import { randomImg } from '../../helper/randomImage';
 export default {
     layout: UploaderLayout,
     components: {
@@ -122,6 +124,9 @@ export default {
 
         UploadTime() {
             return this.timeEnd - this.now
+        },
+        random() {
+            return randomImg()
         }
     },
     setup(props) {
