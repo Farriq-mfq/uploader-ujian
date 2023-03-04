@@ -78,15 +78,15 @@ export default {
             if (this.currentTab === 'range') {
                 try {
                     const ips = await RangeIp(this.ipStart, this.ipEnd);
-                    // this.$emit('submitIp',)
-
+                    this.$emit('submitIp',ips)
+                    this.handleClickCloseModal()
                 } catch (e) {
-
+                    console.log(e)
                 }
             } else if (this.currentTab === 'single') {
                 this.$emit('submitIp', this.allow_ips)
+                this.handleClickCloseModal()
             }
-            // this.handleClickCloseModal()
         },
     }
 }

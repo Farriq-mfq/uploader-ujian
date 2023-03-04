@@ -17,17 +17,17 @@
                 </p>
             </div>
         </div>
-        <p class="text-gray-500 font-semibold leading-tight">
-            JAMES
-        </p>
+        <!-- <p class="text-gray-500 font-semibold leading-tight">
+            {{ message }}
+        </p> -->
     </div>
 </template>
 <script>
 import { useDropzone } from "vue3-dropzone";
-import { CloudArrowUpIcon,FolderOpenIcon } from '@heroicons/vue/24/solid';
+import { CloudArrowUpIcon, FolderOpenIcon } from '@heroicons/vue/24/solid';
 
 export default {
-    components: { CloudArrowUpIcon,FolderOpenIcon },
+    components: { CloudArrowUpIcon, FolderOpenIcon },
     setup(props, ctx) {
         function onDrop(acceptFiles, rejectReasons) {
             ctx.emit("setFile", acceptFiles)

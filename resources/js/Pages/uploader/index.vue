@@ -1,9 +1,9 @@
 <template >
     <div v-if="!room" class="w-full min-h-[80vh] grid place-items-center">
-        <div class="max-w-xl bg-white w-full shadow-sm rounded-lg p-3 border flex items-center space-x-2">
-            <FaceFrownIcon class="h-20 text-blue-500" />
-            <span class="font-bold text-lg">Maaf room tidak ditemukan</span>
+        <div class="max-w-xl w-full p-3 grid place-items-center gap-7 text-center">
             <img :src="random" />
+            <span class="font-bold text-3xl text-gray-500 uppercase leading-tight ">Maaf room tidak ditemukan atau belum di
+                aktifkan</span>
         </div>
     </div>
 
