@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttchController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoomsController;
 use App\Http\Controllers\UploaderController;
@@ -25,6 +26,7 @@ Route::prefix('rooms')->group(function () {
     Route::post('/active/{room}', [RoomsController::class, 'active'])->name('rooms.active');
     Route::post('/{room}/attch', [RoomsController::class, 'attch'])->name('rooms.attch');
 });
+Route::delete('/attch/{attch}', [AttchController::class, 'removeAttch'])->name('attch.delete');
 Route::resource('rooms', RoomsController::class);
 
 Route::prefix('/uploader')->group(function () {

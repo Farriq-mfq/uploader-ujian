@@ -28,9 +28,9 @@ class RoomsController extends Controller
     public function index(Request $request)
     {
         if ($request->keyword) {
-            $rooms = $this->room->where("name", "LIKE", "%" . $request->keyword . "%")->latest()->paginate(5);
+            $rooms = $this->room->with('attchs')->where("name", "LIKE", "%" . $request->keyword . "%")->latest()->paginate(5);
         } else {
-            $rooms = $this->room->latest()->paginate(5);
+            $rooms = $this->room->with('attchs')->latest()->paginate(5);
         }
         return Inertia::render('rooms/index', ['rooms' => $rooms]);
     }
@@ -118,7 +118,11 @@ class RoomsController extends Controller
      */
     public function batch_remove()
     {
-        $this->room->where('id', ">", 0)->delete();
+        $delete = $this->room->where('id', ">", 0)->delete();
+        if ($delete) {
+            $files =  Storage::allFiles('attch');
+            Storage::delete($files);
+        }
     }
 
     /**

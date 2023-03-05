@@ -22,7 +22,8 @@
                         <th>Rooms</th>
                         <th>Waktu</th>
                         <th>Extension yang di izinkan</th>
-                        <th>status</th>
+                        <th>Attchment</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -30,54 +31,74 @@
                     <tr v-for="room in rooms.data" :key="room.id">
 
                         <td>
-                            <ul class="grid gap-3">
-                                <li> Rooms : {{ room.name }}</li>
-                                <li> Kelas : {{ room.kelas }}</li>
-                                <li> Mata Kuliah : {{ room.mata_kuliah }}</li>
-                                <li> Folder : {{ room.folder }}</li>
-                            </ul>
-                            
-                        </td>
-                        <td>
-                            {{ room.time_start }} - {{ room.time_end }}
-                        </td>
-                        <td>
-                            <div class="badge badge-primary mx-1 font-bold p-3"
-                                v-for="(ext, index) in room.extensions.split(',')" :key="index">
-                                {{ ext }}</div>
-                        </td>
-                        <td>
-                            <button class="btn bg-transparent border-0 hover:bg-transparent"
-                                @click="handleToggleActive(room.id)" type="button">
-                                <div class="badge badge-success gap-2" v-if="room.status">Active</div>
-                                <div class="badge badge-error gap-2" v-if="!room.status">Inactive</div>
-                            </button>
-                        </td>
-                        <th class="btn-group-horizontal space-x-2">
-                            <Link :href="$route('rooms.edit', room.id)" as="button" class="btn btn-info btn-sm tooltip"
-                                data-tip="Edit Room">
-                            <PencilIcon class="h-5 text-white" />
-                            </Link>
-                            <button class="btn btn-error btn-sm tooltip" data-tip="Hapus Room" type="button"
-                                @click="handleDelete(room.id)">
-                                <TrashIcon class="h-5 text-white" />
-                            </button>
-                            <button class="btn btn-primary btn-sm tooltip" data-tip="Copy Link Room" type="button"
-                                @click="handleCopy($route('uploader.index', room.name))">
-                                <ClipboardDocumentIcon class="h-5 text-white" />
-                            </button>
-                            <button
-                                class="btn btn-success btn-sm tooltip relative disabled:bg-blue-500 disabled:bg-opacity-60"
-                                :disabled="disableAttch" data-tip="Attach File" type="button"
-                                @click="handleSelectFile($event, room.id)">
-                                <input type="file" multiple class="invisible absolute" id="input_attch">
-                                <LinkIcon class="h-5 text-white pointer-events-none" />
-                            </button>
-                            <button class="btn btn-sm tooltip" data-tip="Manage IP" type="button"
-                                @click="handleCopy($route('uploader.index', room.name))">
-                                <ComputerDesktopIcon class="h-5 text-white" />
-                            </button>
-                        </th>
+                    <tr>
+                        <th>Nama rooms</th>
+                        <td>:</td>
+                        <td>{{ room.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Kelas</th>
+                        <td>:</td>
+                        <td>{{ room.kelas }}</td>
+                    </tr>
+                    <tr>
+                        <th>Mata Kuliah</th>
+                        <td>:</td>
+                        <td>{{ room.mata_kuliah }}</td>
+                    </tr>
+                    <tr>
+                        <th>Folder</th>
+                        <td>:</td>
+                        <td>{{ room.folder }}</td>
+                    </tr>
+                    </td>
+                    <td>
+                        {{ room.time_start }} - {{ room.time_end }}
+                    </td>
+                    <td>
+                        <div class="badge badge-primary mx-1 font-bold p-3"
+                            v-for="(ext, index) in room.extensions.split(',')" :key="index">
+                            {{ ext }}</div>
+                    </td>
+                    <td v-if="!room.attchs.length">
+                        Tidak ada file
+                    </td>
+                    <td v-if="room.attchs.length">
+                        <ul v-for="attch in room.attchs" :key="attch.id">
+                            <ListFile :name="attch.file" :size="attch.size" @removeFile="handleRemoveAttch(attch.id)" />
+                        </ul>
+                    </td>
+                    <td>
+                        <button class="btn bg-transparent border-0 hover:bg-transparent"
+                            @click="handleToggleActive(room.id)" type="button">
+                            <div class="badge badge-success gap-2" v-if="room.status">Active</div>
+                            <div class="badge badge-error gap-2" v-if="!room.status">Inactive</div>
+                        </button>
+                    </td>
+                    <th class="btn-group-horizontal space-x-2">
+                        <Link :href="$route('rooms.edit', room.id)" as="button" class="btn btn-info btn-sm tooltip"
+                            data-tip="Edit Room">
+                        <PencilIcon class="h-5 text-white" />
+                        </Link>
+                        <button class="btn btn-error btn-sm tooltip" data-tip="Hapus Room" type="button"
+                            @click="handleDelete(room.id)">
+                            <TrashIcon class="h-5 text-white" />
+                        </button>
+                        <button class="btn btn-primary btn-sm tooltip" data-tip="Copy Link Room" type="button"
+                            @click="handleCopy($route('uploader.index', room.name))">
+                            <ClipboardDocumentIcon class="h-5 text-white" />
+                        </button>
+                        <button class="btn btn-success btn-sm tooltip relative disabled:bg-blue-500 disabled:bg-opacity-60"
+                            :disabled="disableAttch" data-tip="Attach File" type="button"
+                            @click="handleSelectFile($event, room.id)">
+                            <input type="file" multiple class="invisible absolute" id="input_attch">
+                            <LinkIcon class="h-5 text-white pointer-events-none" />
+                        </button>
+                        <button class="btn btn-sm tooltip" data-tip="Manage IP" type="button"
+                            @click="handleCopy($route('uploader.index', room.name))">
+                            <ComputerDesktopIcon class="h-5 text-white" />
+                        </button>
+                    </th>
                     </tr>
                 </tbody>
             </table>
@@ -92,9 +113,10 @@ import BaseLayout from '../../Layouts/BaseLayout.vue';
 import Swal from 'sweetalert2'
 import Pagintion from "../../components/Pagination.vue"
 import { PencilIcon, TrashIcon, LinkIcon, ComputerDesktopIcon, ClipboardDocumentIcon } from '@heroicons/vue/24/solid';
+import ListFile from '../../components/ListFile.vue'
 export default {
     layout: BaseLayout,
-    components: { Link, Pagintion, PencilIcon, TrashIcon, LinkIcon, ComputerDesktopIcon, ClipboardDocumentIcon },
+    components: { Link, Pagintion, PencilIcon, TrashIcon, LinkIcon, ComputerDesktopIcon, ClipboardDocumentIcon, ListFile },
     props: {
         rooms: Array
     },
@@ -256,6 +278,16 @@ export default {
             if (this.formAttch) {
                 this.formAttch.cancel();
             }
+        },
+        handleRemoveAttch(id) {
+            this.$inertia.delete(this.$route('attch.delete', id), {
+                preserveScroll: true, preserveState: true, onSuccess() {
+                    app.toast.fire("Berhasil", "Berhasil Hapus Attch", "success")
+                },
+                onError() {
+                    app.toast.fire("Gagal", "Gagal Hapus Attch", "error")
+                },
+            })
         }
     }
 }

@@ -28,9 +28,6 @@ export default {
             return formatBytes(this.size)
         }
     },
-    mounted() {
-        console.log(this.progress)
-    },
     props: {
         name: { type: String, required: true },
         size: { type: String, required: true },
