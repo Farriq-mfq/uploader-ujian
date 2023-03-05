@@ -27,12 +27,7 @@ class RoomsRequest extends FormRequest
         return [
             'name' => "required|unique:rooms,name," . $this->segment(2),
             'TimeRanges' => ['required', new timeRanges()],
-            'IpStart' => 'required|ip',
-            'IpEnd' => [
-                'required',
-                'ip',
-                new IpRanges($this->IpStart)
-            ],
+            "ip.*" => "required|ip",
             'folder' => 'required|regex:/^\S*/',
             'kelas' => 'required',
             'mata_kuliah' => 'required',
@@ -48,10 +43,6 @@ class RoomsRequest extends FormRequest
         return [
             'name.required' => "Nama harus di isi",
             'TimeRanges.required' => "Waktu harus di isi dengan benar",
-            'IpStart.required' => "IP range harus di isi",
-            'IpStart.ip' => "IP tidak valid",
-            'IpEnd.required' => "IP range harus di isi",
-            'IpEnd.ip' => "IP tidak valid",
             'folder.required' => "nama folder harus di isi",
             "extensions.required" => "Extension yang di izinkan harus di isi",
             'name.unique' => "nama sudah di gunakan",

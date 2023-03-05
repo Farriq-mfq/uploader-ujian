@@ -10,6 +10,7 @@
                 <a :class="`tab tab-lifted uppercase ${currentTab === tab ? `tab-active` : ``}`"
                     @click.prevent="handleClickTabs(tab)" v-for="(tab, index) in tabs" :key="index">{{ tab }}</a>
             </div>
+            <p class="text-red-500 uppercase my-2" v-if="error">{{ error }}</p>
             <!-- tab content -->
             <div class="w-full mt-3" v-if="currentTab === 'single'">
                 <div class="btn-group mb-2">
@@ -41,7 +42,7 @@
 </template>
 <script>
 import { PlusIcon, MinusIcon } from '@heroicons/vue/24/solid'
-import { RangeIp } from '../helper/rangeIp'
+import { RangeIp, validateIp } from '../helper/rangeIp'
 export default {
     data() {
         return {
@@ -50,7 +51,8 @@ export default {
             countInput: 0,
             allow_ips: [],
             ipStart: null,
-            ipEnd: null
+            ipEnd: null,
+            error: null
         }
     },
     components: {
@@ -61,6 +63,7 @@ export default {
         handleClickTabs(tab) {
             this.currentTab = tab;
             this.allow_ips = []
+            this.error = null
         },
         increment() {
             this.countInput++
@@ -78,13 +81,14 @@ export default {
             if (this.currentTab === 'range') {
                 try {
                     const ips = await RangeIp(this.ipStart, this.ipEnd);
-                    this.$emit('submitIp',ips)
+                    this.$emit('submitIp', ips)
                     this.handleClickCloseModal()
                 } catch (e) {
-                    console.log(e)
+                    this.error = e
                 }
             } else if (this.currentTab === 'single') {
-                this.$emit('submitIp', this.allow_ips)
+                const allow = this.allow_ips.filter(ip => validateIp(ip));
+                this.$emit('submitIp', allow)
                 this.handleClickCloseModal()
             }
         },

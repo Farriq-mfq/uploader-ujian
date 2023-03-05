@@ -23,20 +23,6 @@
             </div>
             <div class="form-control w-full">
                 <label class="label">
-                    <span class="label-text">Range IP</span>
-                </label>
-                <div class="lg:columns-2 space-y-2 lg:space-y-0">
-
-                    <input type="text" v-model="form.IpStart" placeholder="Masukan IP awal"
-                        class="input input-bordered w-full" />
-                    <p class="text-red-500 text-sm" v-if="form.errors.IpStart">{{ form.errors.IpStart }}</p>
-                    <input type="text" v-model="form.IpEnd" placeholder="Masukan IP akhir"
-                        class="input input-bordered w-full" />
-                    <p class="text-red-500 text-sm" v-if="form.errors.IpEnd">{{ form.errors.IpEnd }}</p>
-                </div>
-            </div>
-            <div class="form-control w-full">
-                <label class="label">
                     <span class="label-text">Nama Folder</span>
                 </label>
                 <input type="text" v-model="form.folder" placeholder="Masukan Nama Folder"
@@ -124,8 +110,6 @@ export default {
             form: useForm({
                 name: null,
                 TimeRanges: null,
-                IpStart: null,
-                IpEnd: null,
                 folder: null,
                 status: false,
                 kelas: null,

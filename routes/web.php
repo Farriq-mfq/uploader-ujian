@@ -23,6 +23,7 @@ Route::prefix('rooms')->group(function () {
     Route::post('/batch_active', [RoomsController::class, 'batch_active'])->name('rooms.batch_active');
     Route::post('/batch_inactive', [RoomsController::class, 'batch_inactive'])->name('rooms.batch_inactive');
     Route::post('/active/{room}', [RoomsController::class, 'active'])->name('rooms.active');
+    Route::post('/{room}/attch', [RoomsController::class, 'attch'])->name('rooms.attch');
 });
 Route::resource('rooms', RoomsController::class);
 

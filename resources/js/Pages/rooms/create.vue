@@ -86,7 +86,6 @@
 <script>
 import BaseLayout from '../../Layouts/BaseLayout.vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
-import { MinusIcon, PlusIcon } from '@heroicons/vue/24/solid'
 import { useForm } from '@inertiajs/vue3';
 import { useToast } from "vue-toastification";
 import ModalIp from '../../components/ModalIp.vue';
@@ -94,9 +93,7 @@ import ModalIp from '../../components/ModalIp.vue';
 export default {
     layout: BaseLayout,
     components: {
-        VueDatePicker,
-        PlusIcon,
-        MinusIcon, ModalIp
+        VueDatePicker, ModalIp
     },
     computed: {
         toast() {
@@ -154,7 +151,7 @@ export default {
                     }, this.timer * 1000)
                     this.copyUrl = `${this.baseUrl}/${this.form.name}`
                     this.toast.success("Berhasil membuat rooms");
-                    this.form.reset("name", "TimeRanges", "IpEnd", "IpStart", "extensions", "folder", "status")
+                    this.form.reset("name", "TimeRanges", "ip", "extensions", "kelas", 'mata_kuliah', "folder", "status")
                     this.form.clearErrors()
                 },
             })
@@ -169,7 +166,6 @@ export default {
             }
         },
         handleSumbmitIp(ips) {
-            console.log(ips)
             this.form.ip = ips
         }
     }

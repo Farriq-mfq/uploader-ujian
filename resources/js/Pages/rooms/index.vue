@@ -59,10 +59,29 @@
                             </button>
                         </td>
                         <th class="btn-group-horizontal space-x-2">
-                            <Link :href="$route('rooms.edit', room.id)" as="button" class="btn btn-info">Edit</Link>
-                            <button class="btn btn-error" type="button" @click="handleDelete(room.id)">Delete</button>
-                            <button class="btn btn-primary" type="button"
-                                @click="handleCopy($route('uploader.index', room.name))">Copy</button>
+                            <Link :href="$route('rooms.edit', room.id)" as="button" class="btn btn-info btn-sm tooltip"
+                                data-tip="Edit Room">
+                            <PencilIcon class="h-5 text-white" />
+                            </Link>
+                            <button class="btn btn-error btn-sm tooltip" data-tip="Hapus Room" type="button"
+                                @click="handleDelete(room.id)">
+                                <TrashIcon class="h-5 text-white" />
+                            </button>
+                            <button class="btn btn-primary btn-sm tooltip" data-tip="Copy Link Room" type="button"
+                                @click="handleCopy($route('uploader.index', room.name))">
+                                <ClipboardDocumentIcon class="h-5 text-white" />
+                            </button>
+                            <button class="btn btn-success btn-sm tooltip relative" data-tip="Attach File" type="button"
+                                @click="handleSelectFile($event, room.id)">
+                                <input type="file" multiple class="invisible absolute" id="input_attch">
+                                <div id="file_attch">
+                                    <LinkIcon class="h-5 text-white pointer-events-none" />
+                                </div>
+                            </button>
+                            <button class="btn btn-sm tooltip" data-tip="Manage IP" type="button"
+                                @click="handleCopy($route('uploader.index', room.name))">
+                                <ComputerDesktopIcon class="h-5 text-white" />
+                            </button>
                         </th>
                     </tr>
                 </tbody>
@@ -73,13 +92,14 @@
     </div>
 </template>
 <script>
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import BaseLayout from '../../Layouts/BaseLayout.vue';
 import Swal from 'sweetalert2'
 import Pagintion from "../../components/Pagination.vue"
+import { PencilIcon, TrashIcon, LinkIcon, ComputerDesktopIcon, ClipboardDocumentIcon } from '@heroicons/vue/24/solid';
 export default {
     layout: BaseLayout,
-    components: { Link, Pagintion },
+    components: { Link, Pagintion, PencilIcon, TrashIcon, LinkIcon, ComputerDesktopIcon, ClipboardDocumentIcon },
     props: {
         rooms: Array
     },
@@ -195,6 +215,22 @@ export default {
             } catch (e) {
                 this.toast.fire("Copy URL gagal")
             }
+        },
+        handleSelectFile(e, id) {
+            const input = e.target.querySelector("#input_attch")
+            const attch = e.target.querySelector("#file_attch")
+            const form = useForm({
+                files: []
+            })
+            const app = this;
+            if (input) {
+                input.click()
+                input.addEventListener('change', function () {
+                    form.files = input.files
+                    form.post(app.$route("rooms.attch", id), { preserveState: true, preserveScroll: true })
+                })
+            }
+
         }
     }
 }

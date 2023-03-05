@@ -29,8 +29,11 @@ export const randomImg = () => {
         "27.webp",
         "29.webp",
         "30.webp",
+        "31.webp",
+        "32.webp",
     ];
 
     const random = Math.floor(Math.random() * img.length);
+    console.log(random)
     return `/random/${img[random]}`;
 };

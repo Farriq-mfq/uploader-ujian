@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Room extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'time_start', 'time_end', 'ip_start', 'ip_end', 'folder', 'status', "extensions", "mata_kuliah", "kelas"];
+    protected $fillable = ['name', 'time_start', 'time_end', 'folder', 'status', "extensions", "mata_kuliah", "kelas"];
     protected $guarded = ['id'];
 
     public function scopeActive($query, $status, $id)
@@ -19,6 +19,6 @@ class Room extends Model
 
     public function allowsIP(): HasMany
     {
-        return $this->hasMany('allow_ips', 'room_id');
+        return $this->hasMany(AllowIp::class, 'room_id');
     }
 }

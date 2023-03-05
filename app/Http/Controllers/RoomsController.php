@@ -53,8 +53,6 @@ class RoomsController extends Controller
             "name" => $request->name,
             "time_start" => $times[0],
             "time_end" => $times[1],
-            "ip_start" => $request->IpStart,
-            "ip_end" => $request->IpEnd,
             "folder" => $request->folder,
             'kelas' => $request->kelas,
             'mata_kuliah' => $request->mata_kuliah,
@@ -91,8 +89,6 @@ class RoomsController extends Controller
             "name" => $request->name,
             "time_start" => $times[0],
             "time_end" => $times[1],
-            "ip_start" => $request->IpStart,
-            "ip_end" => $request->IpEnd,
             'kelas' => $request->kelas,
             'mata_kuliah' => $request->mata_kuliah,
             "folder" => $request->folder,
@@ -145,5 +141,9 @@ class RoomsController extends Controller
         if ($room != null) {
             $this->room->active($room->status, $id);
         }
+    }
+    public function attch(Request $request)
+    {
+        dd($request->files);
     }
 }
