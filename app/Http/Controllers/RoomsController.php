@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RoomsRequest;
+use App\Models\AttchRoom;
 use App\Models\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 
@@ -103,6 +105,10 @@ class RoomsController extends Controller
      */
     public function destroy(string $id)
     {
+        $find = $this->room->with('attchs')->find($id);
+        foreach ($find->attchs as $file) {
+            Storage::delete("attch/" . $file->file);
+        }
         $this->room->where('id', $id)->delete();
     }
 
@@ -142,8 +148,22 @@ class RoomsController extends Controller
             $this->room->active($room->status, $id);
         }
     }
-    public function attch(Request $request)
+    public function attch(Request $request, $room)
     {
-        dd($request->files);
+        foreach ($request->files as $files) {
+            foreach ($files as $attch) {
+                $name = $attch->getClientOriginalName();
+                $size = $attch->getSize();
+                $data = [
+                    'file' => $name,
+                    'size' => $size,
+                    'room_id' => $room
+                ];
+                $created = AttchRoom::create($data);
+                if ($created) {
+                    Storage::putFileAs("attch", $attch, $name);
+                }
+            }
+        }
     }
 }

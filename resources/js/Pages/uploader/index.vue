@@ -38,6 +38,9 @@
         <div class="grid gap-5">
             <div class="bg-white py-10">
                 <div class=" px-4 py-2 rounded-sm max-w-xl mx-auto w-full grid gap-3">
+                    <div>
+                        File
+                    </div>
                     <h3 class="font-bold text-gray-600 uppercase">
                         Rooms lab2
                     </h3>

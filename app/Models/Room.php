@@ -21,4 +21,8 @@ class Room extends Model
     {
         return $this->hasMany(AllowIp::class, 'room_id');
     }
+    public function attchs():HasMany
+    {
+        return $this->hasMany(AttchRoom::class, 'room_id');
+    }
 }

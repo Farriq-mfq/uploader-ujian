@@ -12,17 +12,15 @@
             <button @click="handleBatchRemove" type="button" class="btn btn-error">Hapus Semua</button>
             <button class="btn btn-accent" type="button" @click="handleActiveAll">Active Semua</button>
             <button class="btn btn-secondary" type="button" @click="handleInActiveAll">Inactive Semua</button>
+            <button v-if="formAttch" class="btn btn-error" @click.prevent="handleCencelAttch">Batalkan Upload</button>
         </div>
         <div class="overflow-x-auto w-full card shadow-xl p-2">
             <table class="table w-full" v-if="rooms.data.length">
                 <!-- head -->
                 <thead>
                     <tr>
-                        <th>Rooms name</th>
+                        <th>Rooms</th>
                         <th>Waktu</th>
-                        <th>Kelas</th>
-                        <th>Mata Kuliah</th>
-                        <th>Nama Folder</th>
                         <th>Extension yang di izinkan</th>
                         <th>status</th>
                         <th>Actions</th>
@@ -32,19 +30,16 @@
                     <tr v-for="room in rooms.data" :key="room.id">
 
                         <td>
-                            {{ room.name }}
+                            <ul class="grid gap-3">
+                                <li> Rooms : {{ room.name }}</li>
+                                <li> Kelas : {{ room.kelas }}</li>
+                                <li> Mata Kuliah : {{ room.mata_kuliah }}</li>
+                                <li> Folder : {{ room.folder }}</li>
+                            </ul>
+                            
                         </td>
                         <td>
                             {{ room.time_start }} - {{ room.time_end }}
-                        </td>
-                        <td>
-                            {{ room.kelas }}
-                        </td>
-                        <td>
-                            {{ room.mata_kuliah }}
-                        </td>
-                        <td>
-                            {{ room.folder }}
                         </td>
                         <td>
                             <div class="badge badge-primary mx-1 font-bold p-3"
@@ -71,12 +66,12 @@
                                 @click="handleCopy($route('uploader.index', room.name))">
                                 <ClipboardDocumentIcon class="h-5 text-white" />
                             </button>
-                            <button class="btn btn-success btn-sm tooltip relative" data-tip="Attach File" type="button"
+                            <button
+                                class="btn btn-success btn-sm tooltip relative disabled:bg-blue-500 disabled:bg-opacity-60"
+                                :disabled="disableAttch" data-tip="Attach File" type="button"
                                 @click="handleSelectFile($event, room.id)">
                                 <input type="file" multiple class="invisible absolute" id="input_attch">
-                                <div id="file_attch">
-                                    <LinkIcon class="h-5 text-white pointer-events-none" />
-                                </div>
+                                <LinkIcon class="h-5 text-white pointer-events-none" />
                             </button>
                             <button class="btn btn-sm tooltip" data-tip="Manage IP" type="button"
                                 @click="handleCopy($route('uploader.index', room.name))">
@@ -106,6 +101,8 @@ export default {
     data() {
         return {
             keyword: null,
+            disableAttch: false,
+            formAttch: null
         }
     },
     watch: {
@@ -121,7 +118,6 @@ export default {
         const toast = Swal.mixin({
             toast: true,
             position: 'top-right',
-            iconColor: 'white',
             customClass: {
                 popup: 'colored-toast'
             },
@@ -211,26 +207,55 @@ export default {
         async handleCopy(url) {
             try {
                 await navigator.clipboard.writeText(url)
-                this.toast.fire("Copy URL berhasil")
+                this.toast.fire("Copy URL berhasil", "", "success")
             } catch (e) {
-                this.toast.fire("Copy URL gagal")
+                this.toast.fire("Copy URL gagal", "", "error")
             }
         },
         handleSelectFile(e, id) {
             const input = e.target.querySelector("#input_attch")
-            const attch = e.target.querySelector("#file_attch")
             const form = useForm({
                 files: []
             })
             const app = this;
             if (input) {
+                const _defaultHtmlinput = e.target.innerHTML
                 input.click()
                 input.addEventListener('change', function () {
                     form.files = input.files
-                    form.post(app.$route("rooms.attch", id), { preserveState: true, preserveScroll: true })
+                    app.formAttch = form
+                    form.post(app.$route("rooms.attch", id), {
+                        preserveState: true, preserveScroll: true, onProgress(progress) {
+                            e.target.innerHTML = `<span class="text-white">${progress.percentage}%</span>`;
+                            app.disableAttch = true
+                        },
+                        onSuccess() {
+                            app.disableAttch = false
+                            e.target.innerHTML = _defaultHtmlinput
+                            app.formAttch = null
+                            app.toast.fire("Berhasil", "Berhasil Upload Attch", "success")
+                        },
+                        onError() {
+                            app.disableAttch = false
+                            app.formAttch = null
+                            e.target.innerHTML = _defaultHtmlinput
+                            app.toast.fire("Gagal", "Gagal Upload Attch", "error")
+                        },
+                        onCancel() {
+                            app.disableAttch = false
+                            e.target.innerHTML = _defaultHtmlinput
+                            app.formAttch = null
+
+                        }
+                    })
                 })
             }
 
+        },
+        handleCencelAttch() {
+            if (this.formAttch) {
+                this.formAttch.cancel();
+            }
         }
     }
 }
