@@ -61,7 +61,10 @@ class RoomsController extends Controller
             "status" => $request->status,
             "extensions" => $request->extensions,
         ];
-        $this->room->create($data);
+        $create = $this->room->create($data);
+        if ($create) {
+            Storage::createDirectory($request->folder);
+        }
     }
 
     /**
@@ -93,7 +96,6 @@ class RoomsController extends Controller
             "time_end" => $times[1],
             'kelas' => $request->kelas,
             'mata_kuliah' => $request->mata_kuliah,
-            "folder" => $request->folder,
             "status" => $request->status,
             "extensions" => $request->extensions,
         ];
@@ -107,8 +109,10 @@ class RoomsController extends Controller
     {
         $find = $this->room->with('attchs')->find($id);
         foreach ($find->attchs as $file) {
-            Storage::delete("attch/" . $file->file);
+            Storage::delete("attch/" . $find->name . "/" . $file->file);
         }
+        Storage::deleteDirectory($find->folder);
+        Storage::deleteDirectory('attch/' . $find->name);
         $this->room->where('id', $id)->delete();
     }
 
@@ -118,10 +122,14 @@ class RoomsController extends Controller
      */
     public function batch_remove()
     {
+        $rooms = $this->room->where('id', ">", 0)->get();
+        foreach ($rooms as $room) {
+            Storage::deleteDirectory($room->folder);
+        }
         $delete = $this->room->where('id', ">", 0)->delete();
         if ($delete) {
             $files =  Storage::allFiles('attch');
-            Storage::delete($files);
+            Storage::delete($files); // delete attch
         }
     }
 
@@ -154,6 +162,7 @@ class RoomsController extends Controller
     }
     public function attch(Request $request, $room)
     {
+        $get_room = $this->room->find($room);
         foreach ($request->files as $files) {
             foreach ($files as $attch) {
                 $name = $attch->getClientOriginalName();
@@ -165,7 +174,7 @@ class RoomsController extends Controller
                 ];
                 $created = AttchRoom::create($data);
                 if ($created) {
-                    Storage::putFileAs("attch", $attch, $name);
+                    Storage::putFileAs("attch/" . $get_room->name . "/", $attch, $name);
                 }
             }
         }

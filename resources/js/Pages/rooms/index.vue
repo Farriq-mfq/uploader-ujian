@@ -201,7 +201,7 @@ export default {
         handleDelete(id) {
             Swal.fire({
                 title: 'Yakin ?',
-                text: "Ingin menghapus data ini !",
+                text: "Kamu Akan menghapus Folder serta data lainnya di room ini !",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',

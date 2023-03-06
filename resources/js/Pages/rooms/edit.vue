@@ -23,14 +23,6 @@
             </div>
             <div class="form-control w-full">
                 <label class="label">
-                    <span class="label-text">Nama Folder</span>
-                </label>
-                <input type="text" v-model="form.folder" placeholder="Masukan Nama Folder"
-                    class="input input-bordered w-full" />
-                <p class="text-red-500 text-sm" v-if="form.errors.folder">{{ form.errors.folder }}</p>
-            </div>
-            <div class="form-control w-full">
-                <label class="label">
                     <span class="label-text">Kelas</span>
                 </label>
                 <input type="text" v-model="form.kelas" placeholder="Masukan Nama kelas"
@@ -110,7 +102,6 @@ export default {
             form: useForm({
                 name: null,
                 TimeRanges: null,
-                folder: null,
                 status: false,
                 kelas: null,
                 mata_kuliah: null,

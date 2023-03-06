@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\FolderRule;
 use App\Rules\IpRanges;
 use App\Rules\timeRanges;
 use Illuminate\Foundation\Http\FormRequest;
@@ -28,7 +29,10 @@ class RoomsRequest extends FormRequest
             'name' => "required|unique:rooms,name," . $this->segment(2),
             'TimeRanges' => ['required', new timeRanges()],
             "ip.*" => "required|ip",
-            'folder' => 'required|regex:/^\S*/',
+            'folder' => [
+                'required',
+                new FolderRule()
+            ],
             'kelas' => 'required',
             'mata_kuliah' => 'required',
             'extensions' => 'required|regex:/\.(\w)+/',
