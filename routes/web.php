@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AttchController;
+use App\Http\Controllers\FolderController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoomsController;
 use App\Http\Controllers\UploaderController;
@@ -31,6 +32,10 @@ Route::resource('rooms', RoomsController::class);
 
 Route::prefix('/uploader')->group(function () {
     Route::post('/{room}', [UploaderController::class, 'upload'])->name('uploader.upload');
+});
+
+Route::prefix('folder')->group(function () {
+    Route::get("/", [FolderController::class, 'index'])->name('folder');
 });
 // room route
 Route::get('/{room}', [UploaderController::class, 'index'])->name('uploader.index')->middleware('ip_allow');

@@ -37,7 +37,7 @@
                 </div>
                 <div class="form-control w-full">
                     <label class="label">
-                        <span class="label-text">Nama Folder <b>Note : Folder tidak bisa di edit</b></span>
+                        <span class="label-text">Nama Folder</span>
                     </label>
                     <input type="text" v-model="form.folder" placeholder="Masukan Nama Folder"
                         class="input input-bordered w-full" />

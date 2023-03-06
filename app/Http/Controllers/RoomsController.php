@@ -89,17 +89,25 @@ class RoomsController extends Controller
      */
     public function update(RoomsRequest $request, string $id)
     {
+        $room = $this->room->find($id);
         $times = $request->TimeRanges;
         $data = [
             "name" => $request->name,
             "time_start" => $times[0],
             "time_end" => $times[1],
+            'folder' => $request->folder,
             'kelas' => $request->kelas,
             'mata_kuliah' => $request->mata_kuliah,
             "status" => $request->status,
             "extensions" => $request->extensions,
         ];
-        $this->room->where('id', $id)->update($data);
+        $update = $this->room->where('id', $id)->update($data);
+        if ($update) {
+            if ($room) {
+                Storage::move($room->folder . '/', $request->folder);
+                Storage::move("attch/" . $room->name . '/', "attch/" . $request->name);
+            }
+        }
     }
 
     /**

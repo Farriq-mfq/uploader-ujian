@@ -23,6 +23,14 @@
             </div>
             <div class="form-control w-full">
                 <label class="label">
+                    <span class="label-text">Nama Folder</span>
+                </label>
+                <input type="text" v-model="form.folder" placeholder="Masukan Nama Folder"
+                    class="input input-bordered w-full" />
+                <p class="text-red-500 text-sm" v-if="form.errors.folder">{{ form.errors.folder }}</p>
+            </div>
+            <div class="form-control w-full">
+                <label class="label">
                     <span class="label-text">Kelas</span>
                 </label>
                 <input type="text" v-model="form.kelas" placeholder="Masukan Nama kelas"
@@ -105,21 +113,18 @@ export default {
                 status: false,
                 kelas: null,
                 mata_kuliah: null,
-                extensions: null
+                extensions: null,
+                folder: null
             }),
-            copyUrl: "",
-            timer: 3
         };
     },
     mounted() {
         this.form.name = this.room.name,
             this.form.TimeRanges = [this.room.time_start, this.room.time_end]
-        this.form.IpStart = this.room.ip_start
-        this.form.IpEnd = this.room.ip_end
-        this.form.folder = this.room.folder
         this.form.status = this.room.status == 1 ? true : false
         this.form.extensions = this.room.extensions
         this.form.kelas = this.room.kelas
+        this.form.folder = this.room.folder
         this.form.mata_kuliah = this.room.mata_kuliah
     },
     methods: {
@@ -131,6 +136,7 @@ export default {
                     this.toast.success("Berhasil update rooms");
                     this.form.clearErrors()
                 },
+
             })
         },
 

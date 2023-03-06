@@ -33,22 +33,18 @@
                         <td>
                     <tr>
                         <th>Nama rooms</th>
-                        <td>:</td>
                         <td>{{ room.name }}</td>
                     </tr>
                     <tr>
                         <th>Kelas</th>
-                        <td>:</td>
                         <td>{{ room.kelas }}</td>
                     </tr>
                     <tr>
                         <th>Mata Kuliah</th>
-                        <td>:</td>
                         <td>{{ room.mata_kuliah }}</td>
                     </tr>
                     <tr>
                         <th>Folder</th>
-                        <td>:</td>
                         <td>{{ room.folder }}</td>
                     </tr>
                     </td>

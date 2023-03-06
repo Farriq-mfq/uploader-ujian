@@ -22,22 +22,15 @@
                 </div>
             </BaseLink>
         </li>
-        <!-- <li>
-                    <BaseLink path="berkas" #title>
-                        <div class="flex space-x-3 items-center">
-                            <FolderOpenIcon class="h-6 w-6 text-white" />
-                            <span>Berkas</span>
-                        </div>
-                    </BaseLink>
-                </li>
-                <li>
-                    <BaseLink path="monitoring" #title>
-                        <div class="flex space-x-3 items-center">
-                            <ComputerDesktopIcon class="h-6 w-6 text-white" />
-                            <span>Monitoring</span>
-                        </div>
-                    </BaseLink>
-                </li>  -->
+        <li>
+            <BaseLink path="folder" #title>
+                <div class="flex space-x-3 items-center">
+                    <FolderOpenIcon class="h-6 w-6 text-white" />
+                    <span>Folder</span>
+                </div>
+            </BaseLink>
+        </li>
+               
     </ul>
 </template>
 <script>
