@@ -13,7 +13,7 @@ class RoomObserver
     public function created(Room $room): void
     {
         $data = [];
-        foreach (request('ip') as $key => $ip) {
+        foreach (request('ip') as $ip) {
             $data[] =  ['ip' => $ip];
         }
         $room->allowsIP()->createMany($data);

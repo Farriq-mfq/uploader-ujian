@@ -81,7 +81,7 @@
                             <TrashIcon class="h-5 text-white" />
                         </button>
                         <button class="btn btn-primary btn-sm tooltip" data-tip="Copy Link Room" type="button"
-                            @click="handleCopy($route('uploader.index', room.name))">
+                            @click="handleCopy($route('uploader.show', room.name))">
                             <ClipboardDocumentIcon class="h-5 text-white" />
                         </button>
                         <button class="btn btn-success btn-sm tooltip relative disabled:bg-blue-500 disabled:bg-opacity-60"

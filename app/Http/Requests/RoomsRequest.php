@@ -26,7 +26,7 @@ class RoomsRequest extends FormRequest
     {
 
         return [
-            'name' => "required|unique:rooms,name," . $this->segment(2),
+            'name' => "required|unique:rooms,name," . request('room'),
             'TimeRanges' => ['required', new timeRanges()],
             "ip.*" => "required|ip",
             'folder' => [

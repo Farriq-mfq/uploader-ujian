@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AttchController;
+use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\FolderController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoomsController;
@@ -19,23 +20,30 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', [HomeController::class, 'index'])->name('dashboard');
-Route::prefix('rooms')->group(function () {
-    Route::post('/batch_remove', [RoomsController::class, 'batch_remove'])->name('rooms.batch_remove');
-    Route::post('/batch_active', [RoomsController::class, 'batch_active'])->name('rooms.batch_active');
-    Route::post('/batch_inactive', [RoomsController::class, 'batch_inactive'])->name('rooms.batch_inactive');
-    Route::post('/active/{room}', [RoomsController::class, 'active'])->name('rooms.active');
-    Route::post('/{room}/attch', [RoomsController::class, 'attch'])->name('rooms.attch');
-});
-Route::delete('/attch/{attch}', [AttchController::class, 'removeAttch'])->name('attch.delete');
-Route::resource('rooms', RoomsController::class);
+Route::prefix('private')->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('dashboard');
+    Route::prefix('rooms')->group(function () {
+        Route::post('/batch_remove', [RoomsController::class, 'batch_remove'])->name('rooms.batch_remove');
+        Route::post('/batch_active', [RoomsController::class, 'batch_active'])->name('rooms.batch_active');
+        Route::post('/batch_inactive', [RoomsController::class, 'batch_inactive'])->name('rooms.batch_inactive');
+        Route::post('/active/{room}', [RoomsController::class, 'active'])->name('rooms.active');
+        Route::post('/{room}/attch', [RoomsController::class, 'attch'])->name('rooms.attch');
+    });
+    Route::delete('/attch/{attch}', [AttchController::class, 'removeAttch'])->name('attch.delete');
+    Route::resource('rooms', RoomsController::class);
 
-Route::prefix('/uploader')->group(function () {
-    Route::post('/{room}', [UploaderController::class, 'upload'])->name('uploader.upload');
+
+    Route::prefix('folder')->group(function () {
+        Route::get("/", [FolderController::class, 'index'])->name('folder');
+    });
 });
 
-Route::prefix('folder')->group(function () {
-    Route::get("/", [FolderController::class, 'index'])->name('folder');
+// client
+Route::prefix('error')->middleware('ip_allow:error')->group(function () {
+    Route::get("/", [ErrorController::class, 'index'])->name('error.index');
+    Route::get("/block", [ErrorController::class, 'block'])->name('error.block');
 });
-// room route
-Route::get('/{room}', [UploaderController::class, 'index'])->name('uploader.index')->middleware('ip_allow');
+//public room route
+Route::get('/', [UploaderController::class, 'index'])->name('uploader.index');
+Route::get('/{room}', [UploaderController::class, 'show_uploader'])->name('uploader.show')->middleware('ip_allow:check');
+Route::post('/{room}', [UploaderController::class, 'upload'])->name('uploader.upload');

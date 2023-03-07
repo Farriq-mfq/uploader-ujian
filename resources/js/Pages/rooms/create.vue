@@ -113,7 +113,6 @@ export default {
     },
     props: {
         errors: Object,
-        baseUrl: String
     },
     setup() {
         const toast = useToast()
@@ -149,7 +148,7 @@ export default {
                             this.copyUrl = ""
                         }
                     }, this.timer * 1000)
-                    this.copyUrl = `${this.baseUrl}/${this.form.name}`
+                    this.copyUrl = this.$route('uploader.show', this.form.name)
                     this.toast.success("Berhasil membuat rooms");
                     this.form.reset("name", "TimeRanges", "ip", "extensions", "kelas", 'mata_kuliah', "folder", "status")
                     this.form.clearErrors()

@@ -40,8 +40,7 @@ class RoomsController extends Controller
      */
     public function create()
     {
-        $url = URL::to("/");
-        return Inertia::render('rooms/create', ['baseUrl' => $url]);
+        return Inertia::render('rooms/create');
     }
 
     /**

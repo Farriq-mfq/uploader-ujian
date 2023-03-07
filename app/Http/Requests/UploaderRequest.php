@@ -22,10 +22,17 @@ class UploaderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nama' => 'required',
+            'name' => 'required',
             'nim' => 'required',
-            'kelas' => 'required',
-            'file' => 'required'
+            'files' => 'required'
+        ];
+    }
+    public function messages(): array
+    {
+        return [
+            'name' => "Nama harus di isi",
+            'nim' => "NIM Harus di isi",
+            'files' => "File harus ada"
         ];
     }
 }
