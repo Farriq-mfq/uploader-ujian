@@ -16,10 +16,8 @@ class AttchController extends Controller
 
     public function removeAttch($attch)
     {
-        $find = $this->attch->where('id', $attch)->select('file')->first();
-        $delete = $this->attch->where('id', $attch)->delete();
-        if ($delete) {
-            Storage::delete('attch/' . $find->file);
-        }
+        $find = $this->attch->with('room')->find($attch);
+        Storage::delete('attch/' . $find->room->name . "/" . $find->file);
+        $this->attch->where('id', $attch)->delete();
     }
 }

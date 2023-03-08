@@ -57,6 +57,12 @@
             </div>
             <div class="form-control w-full">
                 <label class="label">
+                    <span class="label-text">Field Type Soal</span>
+                </label>
+                <input type="checkbox" v-model="form.type_field" class="toggle toggle-primary" />
+            </div>
+            <div class="form-control w-full">
+                <label class="label">
                     <span class="label-text">Status</span>
                 </label>
                 <input type="checkbox" v-model="form.status" class="toggle toggle-primary" checked />
@@ -81,22 +87,6 @@ export default {
         PlusIcon,
         MinusIcon,
     },
-    computed: {
-        toast() {
-            const _Toast = Swal.mixin({
-                toast: true,
-                position: 'top-right',
-                iconColor: 'white',
-                customClass: {
-                    popup: 'colored-toast'
-                },
-                showConfirmButton: false,
-                timer: 1500,
-                timerProgressBar: true,
-            })
-            return _Toast
-        }
-    },
     props: {
         errors: Object,
         room: Object
@@ -114,7 +104,8 @@ export default {
                 kelas: null,
                 mata_kuliah: null,
                 extensions: null,
-                folder: null
+                folder: null,
+                type_field: false
             }),
         };
     },
@@ -126,6 +117,7 @@ export default {
         this.form.kelas = this.room.kelas
         this.form.folder = this.room.folder
         this.form.mata_kuliah = this.room.mata_kuliah
+        this.form.type_field = this.room.type_field == 1 ? true : false
     },
     methods: {
         async handleSubmit() {

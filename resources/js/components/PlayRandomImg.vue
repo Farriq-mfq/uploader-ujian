@@ -3,14 +3,14 @@
         <div class="max-w-xl w-full p-3 grid place-items-center gap-7 text-center">
             <img :src="random" />
             <kbd class="kbd kbd-lg">{{ message }}</kbd>
-            <button class="btn btn-primary btn-sm" type="button" @click.prevent="reloadButton">
-                Kembali
-            </button>
+            <Link class="btn btn-primary btn-sm" as="button" :href="$route('uploader.index')" replace>
+            Kembali
+            </Link>
         </div>
     </div>
 </template>
 <script>
-import { router } from '@inertiajs/vue3'
+import { Link } from '@inertiajs/vue3';
 import { randomImg } from '../helper/randomImage';
 export default {
     props: {
@@ -19,14 +19,10 @@ export default {
     },
     computed: {
         random() {
-            return randomImg()
+            return randomImg();
         }
     },
-    methods: {
-        reloadButton() {
-            router.visit('/');
-        }
-    }
+    components: { Link }
 }
 </script>
 <style lang="">

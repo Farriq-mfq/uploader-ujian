@@ -5,11 +5,12 @@
             <span class="font-bold text-lg">Ujian belum mulai</span>
         </div>
     </div>
+    <PlayRandomImg :show="room && expired" message="WAKTU HABIS" />
 
-    <div class="mockup-window relative bg-primary bg-opacity-5 shadow" v-if="room && !startTime">
+    <div class="mockup-window relative bg-blue-500 bg-opacity-5 shadow" v-if="room && !expired && !startTime">
         <div
-            class="shadow-lg text-4xl font-semibold text-gray-700 justify-self-center bg-primary bg-opacity-20 border w-fit absolute lg:top-14 top-0 lg:right-5 right-0 grid place-items-center gap-2 rounded-lg">
-            <div class="text-sm text-white bg-primary font-bold leading-tight w-full h-10 grid place-items-center px-4">
+            class="shadow-lg text-4xl font-semibold text-gray-700 justify-self-center bg-blue-500 bg-opacity-20 border w-fit absolute lg:top-14 top-0 lg:right-5 right-0 grid place-items-center gap-2 rounded-lg">
+            <div class="text-sm text-white bg-blue-500 font-bold leading-tight w-full h-10 grid place-items-center px-4">
                 <h5>Sisa Waktu Upload</h5>
             </div>
             <vue-countdown class="p-5" :time="UploadTime" @end="handleEnd" :interval="1000"
@@ -24,26 +25,39 @@
                     {{ seconds }}
                 </span>
             </vue-countdown>
-            <!-- <p class="p-4 uppercase text-red-500" v-if="timeEnd">Waktu habis</p> -->
         </div>
         <div class="grid gap-5">
             <div class="bg-white py-10">
                 <div class=" px-4 py-2 rounded-sm max-w-xl mx-auto w-full grid gap-3">
-                    <div>
-                        File
+                    <div class="grid gap-2" v-if="room.attchs.length">
+                        <h3 class="font-bold mb-2 uppercase">Attchments</h3>
+                        <Attch @handle-download="downloadAttch(attch.id)" :name="attch.file" v-for="attch in room.attchs"
+                            :key="attch.id" />
                     </div>
-                    <h3 class="font-bold text-gray-600 uppercase">
-                        Rooms lab2
+                    <h3 class="font-bold uppercase">
+                        Room {{ room.name }}
                     </h3>
                     <form action="" @submit.prevent="handleUpload">
                         <div class="my-2 w-full">
-                            <input type="text" v-model="form.name" placeholder="Masukan Nama"
+                            <input :disabled="form.processing" type="text" v-model="form.name" placeholder="Masukan Nama"
                                 class="input input-bordered w-full " />
                             <p class="text-red-500 text-sm" v-if="form.errors.name">{{ form.errors.name }}</p>
                         </div>
                         <div class="my-2 w-full">
-                            <input type="text" v-model="form.nim" placeholder="NIM" class="input input-bordered w-full " />
+                            <input :disabled="form.processing" type="text" v-model="form.nim" placeholder="NIM"
+                                class="input input-bordered w-full " />
                             <p class="text-red-500 text-sm" v-if="form.errors.nim">{{ form.errors.nim }}</p>
+                        </div>
+                        <div v-if="room.type_field" class="mb-4">
+                            <div class="my-2">
+                                <label class="text-sm">Pilih Type Soal</label>
+                            </div>
+                            <select :disabled="form.processing" class="select w-full select-bordered" v-model="form.type">
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                            </select>
+                            <p class="text-red-500 text-sm" v-if="form.errors.type">{{ form.errors.type }}</p>
+
                         </div>
                         <div class="my-2 w-full">
                             <Upload v-if="!form.files.length" @set-file="handleSetFile" />
@@ -55,7 +69,8 @@
                         </div>
                         <div class="my-2 w-full space-y-2">
                             <button :disabled="form.processing" type="submit"
-                                :class="`btn btn-primary border-none font-bold leading-tight hover:bg-primary btn-block text-lg disabled:bg-primary disabled:text-white disabled:cursor-not-allowed ${form.processing ? `loading` : ``}`">Upload</button>
+                                :class="`btn bg-blue-500 border-none font-bold leading-tight hover:bg-blue-500/90 btn-block text-lg disabled:bg-blue-500/50 disabled:text-white disabled:cursor-not-allowed ${form.processing ? `loading` : ``}`">{{
+                                    form.processing ? "Uploading..." : "Upload" }}</button>
                             <button v-if="form.processing" type="button" @click="handleCencel"
                                 :class="`btn bg-red-400 border-none font-bold leading-tight hover:bg-red-500 btn-block text-lg disabled:bg-red-400 disabled:text-white disabled:cursor-not-allowed`">Batal</button>
                         </div>
@@ -96,17 +111,20 @@
 <script>
 import { FaceFrownIcon } from '@heroicons/vue/24/solid';
 import { useForm } from '@inertiajs/vue3';
+import Attch from '../../components/Attch.vue';
 import ListFile from '../../components/ListFile.vue';
 import PlayRandomImg from '../../components/PlayRandomImg.vue';
 import Upload from '../../components/Upload.vue';
 import { ConvertDate } from '../../helper/convertDate';
 import UploaderLayout from '../../Layouts/UploaderLayout.vue';
-
 export default {
     layout: UploaderLayout,
     components: {
         Upload,
-        ListFile, FaceFrownIcon, PlayRandomImg
+        ListFile,
+        FaceFrownIcon,
+        PlayRandomImg,
+        Attch
     },
     props: {
         room: Object | null
@@ -128,7 +146,8 @@ export default {
             const now = new Date();
             const timeStart = ConvertDate(props.room.time_start);
             const timeEnd = ConvertDate(props.room.time_end);
-            return { timeStart, timeEnd, now }
+            const expired = now > timeEnd
+            return { timeStart, timeEnd, now, expired }
         }
     },
     data() {
@@ -136,14 +155,14 @@ export default {
             form: useForm({
                 name: null,
                 nim: null,
+                type: null,
                 files: []
             }),
         };
     },
     methods: {
         handleEnd() {
-            // this.timeEnd = true
-            // this.$inertia.replace(this.$route("rooms.index"));
+            this.$inertia.visit(this.$route('uploader.show', this.room.name), { replace: true },)
         },
         handleSetFile(acceptFiles) {
             if (acceptFiles.length) {
@@ -152,7 +171,7 @@ export default {
         },
 
         handleUpload() {
-            this.form.post(this.$route('uploader.upload', 1), { preserveScroll: true, preserveState: true })
+            this.form.post(this.$route('uploader.upload', this.room.name), { preserveScroll: true, preserveState: true })
         },
         handleRemoveFile(index) {
             if (this.form.files.length) {
@@ -163,6 +182,9 @@ export default {
         },
         handleCencel() {
             this.form.cancel()
+        },
+        downloadAttch(id) {
+            this.$inertia.get(this.$route('uploader.download.attch', id))
         }
     }
 

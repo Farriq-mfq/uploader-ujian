@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string("mata_kuliah");
             $table->string('folder', 50);
             $table->string('extensions');
+            $table->boolean('type_field')->default(false);
             $table->boolean('status')->default(false);
             $table->timestamps();
         });

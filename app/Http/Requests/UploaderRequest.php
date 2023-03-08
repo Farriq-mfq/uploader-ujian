@@ -2,10 +2,16 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Room;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UploaderRequest extends FormRequest
 {
+    private Room $room;
+    public function __construct()
+    {
+        $this->room = new Room();
+    }
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -21,18 +27,21 @@ class UploaderRequest extends FormRequest
      */
     public function rules(): array
     {
+        $room = $this->room->where('name', request('room'))->first();
         return [
             'name' => 'required',
             'nim' => 'required',
+            'type' => $room->type_field ? 'required' : '',
             'files' => 'required'
         ];
     }
     public function messages(): array
     {
         return [
-            'name' => "Nama harus di isi",
-            'nim' => "NIM Harus di isi",
-            'files' => "File harus ada"
+            'name.required' => "Nama harus di isi",
+            'nim.required' => "NIM Harus di isi",
+            'files.required' => "File harus ada",
+            'type.required'=>"Type soal harus di isi"
         ];
     }
 }

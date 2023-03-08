@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RoomsRequest;
+use App\Models\AllowIp;
 use App\Models\AttchRoom;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
 
@@ -15,9 +17,11 @@ class RoomsController extends Controller
 {
 
     private Room $room;
+    private AllowIp $ips;
     public function __construct()
     {
         $this->room = new Room();
+        $this->ips = new AllowIp();
     }
 
     /**
@@ -28,9 +32,9 @@ class RoomsController extends Controller
     public function index(Request $request)
     {
         if ($request->keyword) {
-            $rooms = $this->room->with('attchs')->where("name", "LIKE", "%" . $request->keyword . "%")->latest()->paginate(5);
+            $rooms = $this->room->with(['attchs', 'allowsIP'])->where("name", "LIKE", "%" . $request->keyword . "%")->latest()->paginate(5);
         } else {
-            $rooms = $this->room->with('attchs')->latest()->paginate(5);
+            $rooms = $this->room->with(['attchs', 'allowsIP'])->latest()->paginate(5);
         }
         return Inertia::render('rooms/index', ['rooms' => $rooms]);
     }
@@ -59,6 +63,7 @@ class RoomsController extends Controller
             'mata_kuliah' => $request->mata_kuliah,
             "status" => $request->status,
             "extensions" => $request->extensions,
+            "type_field" => $request->type_field,
         ];
         $create = $this->room->create($data);
         if ($create) {
@@ -99,6 +104,7 @@ class RoomsController extends Controller
             'mata_kuliah' => $request->mata_kuliah,
             "status" => $request->status,
             "extensions" => $request->extensions,
+            "type_field" => $request->type_field,
         ];
         $update = $this->room->where('id', $id)->update($data);
         if ($update) {
@@ -185,5 +191,28 @@ class RoomsController extends Controller
                 }
             }
         }
+    }
+    public function show_ip($room)
+    {
+        $allows = $this->ips->whereHas('room', function ($q) use ($room) {
+            return $q->where("id", $room);
+        })->orderBy('ip', "ASC")->get();
+        return Inertia::render('rooms/ip', ['allows' => $allows, 'room' => $room]);
+    }
+    public function add_ip(Request $request, $room)
+    {
+        $validate = Validator::make($request->all(), ['ip' => ['required', 'ip']], ['ip.required' => "ip harus di isi", 'ip.ip' => 'ip tidak valid']);
+
+        if ($validate->validated()) {
+            $data = [
+                'ip' => $request->ip,
+            ];
+            $room = $this->room->find($room);
+            $room->allowsIP()->create($data);
+        }
+    }
+    public function delete_ip($room, $ip)
+    {
+        $this->ips->where('id', $ip)->delete();
     }
 }

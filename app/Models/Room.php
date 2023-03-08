@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Room extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'time_start', 'time_end', 'folder', 'status', "extensions", "mata_kuliah", "kelas"];
+    protected $fillable = ['name', 'time_start', 'time_end', 'folder', 'status', "extensions", "mata_kuliah", "kelas", "type_field"];
     protected $guarded = ['id'];
 
     public function scopeActive($query, $status, $id)
@@ -21,7 +21,7 @@ class Room extends Model
     {
         return $this->hasMany(AllowIp::class, 'room_id');
     }
-    public function attchs():HasMany
+    public function attchs(): HasMany
     {
         return $this->hasMany(AttchRoom::class, 'room_id');
     }

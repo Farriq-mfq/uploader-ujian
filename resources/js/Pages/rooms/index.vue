@@ -22,6 +22,7 @@
                         <th>Rooms</th>
                         <th>Waktu</th>
                         <th>Extension yang di izinkan</th>
+                        <th>IP Yang di izinkan</th>
                         <th>Attchment</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -47,6 +48,10 @@
                         <th>Folder</th>
                         <td>{{ room.folder }}</td>
                     </tr>
+                    <tr>
+                        <th>Type Field</th>
+                        <td class="uppercase">{{ room.type_field ? "diaktifkan" : "tidak aktif" }}</td>
+                    </tr>
                     </td>
                     <td>
                         {{ room.time_start }} - {{ room.time_end }}
@@ -55,6 +60,11 @@
                         <div class="badge badge-primary mx-1 font-bold p-3"
                             v-for="(ext, index) in room.extensions.split(',')" :key="index">
                             {{ ext }}</div>
+                    </td>
+                    <td>
+                        <kbd class="kbd kbd-md shadow-lg">
+                            {{ room.allows_i_p.length }}
+                        </kbd>
                     </td>
                     <td v-if="!room.attchs.length">
                         Tidak ada file
@@ -90,10 +100,10 @@
                             <input type="file" multiple class="invisible absolute" id="input_attch">
                             <LinkIcon class="h-5 text-white pointer-events-none" />
                         </button>
-                        <button class="btn btn-sm tooltip" data-tip="Manage IP" type="button"
-                            @click="handleCopy($route('uploader.index', room.name))">
-                            <ComputerDesktopIcon class="h-5 text-white" />
-                        </button>
+                        <Link :href="$route('rooms.show_ip', room.id)" as="button" class="btn btn-sm tooltip"
+                            data-tip="Manage IP">
+                        <ComputerDesktopIcon class="h-5 text-white" />
+                        </Link>
                     </th>
                     </tr>
                 </tbody>
@@ -101,6 +111,7 @@
             <Pagintion v-if="rooms.data.length" :links="rooms.links" />
         </div>
         <p class="text-center py-4" v-if="rooms.data.length === 0">Rooms tidak ada</p>
+
     </div>
 </template>
 <script>
@@ -110,6 +121,7 @@ import Swal from 'sweetalert2'
 import Pagintion from "../../components/Pagination.vue"
 import { PencilIcon, TrashIcon, LinkIcon, ComputerDesktopIcon, ClipboardDocumentIcon } from '@heroicons/vue/24/solid';
 import ListFile from '../../components/ListFile.vue'
+import { useToast } from 'vue-toastification'
 export default {
     layout: BaseLayout,
     components: { Link, Pagintion, PencilIcon, TrashIcon, LinkIcon, ComputerDesktopIcon, ClipboardDocumentIcon, ListFile },
@@ -120,7 +132,8 @@ export default {
         return {
             keyword: null,
             disableAttch: false,
-            formAttch: null
+            formAttch: null,
+            set_id_modal: null
         }
     },
     watch: {
@@ -133,16 +146,7 @@ export default {
         }
     },
     setup() {
-        const toast = Swal.mixin({
-            toast: true,
-            position: 'top-right',
-            customClass: {
-                popup: 'colored-toast'
-            },
-            showConfirmButton: false,
-            timer: 1500,
-            timerProgressBar: true,
-        })
+        const toast = useToast()
         return { toast }
     },
 
@@ -225,9 +229,9 @@ export default {
         async handleCopy(url) {
             try {
                 await navigator.clipboard.writeText(url)
-                this.toast.fire("Copy URL berhasil", "", "success")
+                this.toast.success("Copy URL berhasil")
             } catch (e) {
-                this.toast.fire("Copy URL gagal", "", "error")
+                this.toast.error("Copy URL gagal")
             }
         },
         handleSelectFile(e, id) {
@@ -251,13 +255,13 @@ export default {
                             app.disableAttch = false
                             e.target.innerHTML = _defaultHtmlinput
                             app.formAttch = null
-                            app.toast.fire("Berhasil", "Berhasil Upload Attch", "success")
+                            app.toast.success("Berhasil Upload Attch")
                         },
                         onError() {
                             app.disableAttch = false
                             app.formAttch = null
                             e.target.innerHTML = _defaultHtmlinput
-                            app.toast.fire("Gagal", "Gagal Upload Attch", "error")
+                            app.toast.error("Gagal Upload Attch")
                         },
                         onCancel() {
                             app.disableAttch = false
@@ -276,15 +280,16 @@ export default {
             }
         },
         handleRemoveAttch(id) {
+            const app = this;
             this.$inertia.delete(this.$route('attch.delete', id), {
                 preserveScroll: true, preserveState: true, onSuccess() {
-                    app.toast.fire("Berhasil", "Berhasil Hapus Attch", "success")
+                    app.toast.success("Berhasil Hapus Attch")
                 },
                 onError() {
-                    app.toast.fire("Gagal", "Gagal Hapus Attch", "error")
+                    app.toast.error("Gagal Hapus Attch")
                 },
             })
-        }
+        },
     }
 }
 </script>

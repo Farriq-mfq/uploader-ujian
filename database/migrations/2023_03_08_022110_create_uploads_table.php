@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('uploads', function (Blueprint $table) {
             $table->id();
-            $table->string("nim");
+            $table->string('name');
+            $table->string('nim')->unique();
+            $table->string('type')->nullable();
+            $table->unsignedBigInteger('room_id');
+            $table->string('file');
+            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('CASCADE');
             $table->timestamps();
         });
     }
