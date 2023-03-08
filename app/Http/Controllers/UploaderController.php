@@ -36,21 +36,23 @@ class UploaderController extends Controller
         return Inertia::render('uploader/show', ['room' => $room]);
     }
 
-    public function upload(Request $request)
+    public function upload(UploaderRequest $request, $room)
     {
-        $zip = new \ZipArchive();
-        // if ($zip->open('test_new.zip', \ZipArchive::CREATE) === TRUE){
-
-        // }
-        if($zip->open('test_new.zip', \ZipArchive::CREATE)){
-            $zip->addFile($request->file('files')[0]);
-            $zip->close();
+        $format1 = "NAMA_MAKUL_NIM_SOAL";
+        $format2 = "NAMA_MAKUL_NIM";
+        str_replace(["NAMA", "MAKUL", "NIM", "SOAL"], ["FARRIQ", "KELAS", "NOMER", "ANBSE"], $format1);
+        $room = $this->room->where("name", $room)->first();
+        if (count($request->file('files')) > 1) {
+            $zip = new \ZipArchive();
+            foreach ($request->file('files') as $file) {
+                if ($zip->open(storage_path("app/" . $room->folder . "/coba.zip"), \ZipArchive::CREATE)) {
+                    $zip->addFile($file->getRealPath(), $file->getClientOriginalName());
+                    $zip->close();
+                }
+            }
+        } else {
+            Storage::putFileAs($room->folder, $request->file('files')[0], $request->file('files')[0]->getClientOriginalName());
         }
-        // if($request->files->count() > 1){
-        //     dd("lebih dari sati");
-        // }else{
-        //     dd("hanya satu");
-        // }
     }
     public function downloadAttch($attch)
     {

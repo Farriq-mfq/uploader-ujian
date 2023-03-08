@@ -7,23 +7,20 @@
     </div>
     <PlayRandomImg :show="room && expired" message="WAKTU HABIS" />
 
-    <div class="mockup-window relative bg-blue-500 bg-opacity-5 shadow" v-if="room && !expired && !startTime">
+    <div class="mockup-window relative bg-blue-500 bg-opacity-5 shadow z-50" v-if="room && !expired && !startTime">
         <div
-            class="shadow-lg text-4xl font-semibold text-gray-700 justify-self-center bg-blue-500 bg-opacity-20 border w-fit absolute lg:top-14 top-0 lg:right-5 right-0 grid place-items-center gap-2 rounded-lg">
+            class="shadow-sm  text-4xl font-semibold text-gray-700 justify-self-center bg-blue-500/10 border-2 w-fit absolute lg:top-14 top-0 lg:right-5 right-0 grid place-items-center gap-2 rounded-lg">
             <div class="text-sm text-white bg-blue-500 font-bold leading-tight w-full h-10 grid place-items-center px-4">
                 <h5>Sisa Waktu Upload</h5>
             </div>
             <vue-countdown class="p-5" :time="UploadTime" @end="handleEnd" :interval="1000"
-                v-slot="{ hours, minutes, seconds }">
-                <span>
-                    {{ hours }}&nbsp;:
-                </span>
-                <span>
-                    {{ minutes }}&nbsp;:
-                </span>
-                <span>
-                    {{ seconds }}
-                </span>
+                v-slot="{ days, hours, minutes, seconds }">
+                <div class="font-mono text-4xl text-gray-800">
+                    <span class="countdown" v-if="days > 0"><span :style="`--value:${days}`"></span>:</span>
+                    <span class="countdown"><span :style="`--value:${hours}`"></span>:</span>
+                    <span class="countdown"><span :style="`--value:${minutes}`"></span>:</span>
+                    <span class="countdown"><span :style="`--value:${seconds}`"></span></span>
+                </div>
             </vue-countdown>
         </div>
         <div class="grid gap-5">
