@@ -6,6 +6,7 @@ use App\Http\Requests\UploaderRequest;
 use App\Models\AllowIp;
 use App\Models\AttchRoom;
 use App\Models\Room;
+use App\Models\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -15,11 +16,13 @@ class UploaderController extends Controller
     private Room $room;
     private AllowIp $allowIP;
     private AttchRoom $attch;
+    private Upload $upload;
     public function __construct()
     {
         $this->room = new Room();
         $this->allowIP = new AllowIp();
         $this->attch = new AttchRoom();
+        $this->upload = new Upload();
     }
     public function index()
     {
@@ -32,26 +35,61 @@ class UploaderController extends Controller
     }
     public function show_uploader($room)
     {
-        $room = $this->room->where('name', $room)->where('status', 1)->with('attchs')->first();
+        $room = $this->room->where('name', $room)->where('status', 1)->with('attchs')->with('uploads')->first();
         return Inertia::render('uploader/show', ['room' => $room]);
     }
 
     public function upload(UploaderRequest $request, $room)
     {
-        $format1 = "NAMA_MAKUL_NIM_SOAL";
-        $format2 = "NAMA_MAKUL_NIM";
-        str_replace(["NAMA", "MAKUL", "NIM", "SOAL"], ["FARRIQ", "KELAS", "NOMER", "ANBSE"], $format1);
+        $format1 = "KELAS_MAKUL_NIM_TYPE";
+        $format2 = "KELAS_MAKUL_NIM";
         $room = $this->room->where("name", $room)->first();
+        $nama_file_format_1 = strtoupper(str_replace(["KELAS", "MAKUL", "NIM", "TYPE"], [$room->kelas, str_replace(" ", "_", $room->mata_kuliah), $request->nim, $request->type], $format1));
+        $nama_file_format_2 = strtoupper(str_replace(["KELAS", "MAKUL", "NIM"], [$room->kelas, str_replace(" ", "_", $room->mata_kuliah), $request->nim], $format2));
         if (count($request->file('files')) > 1) {
-            $zip = new \ZipArchive();
-            foreach ($request->file('files') as $file) {
-                if ($zip->open(storage_path("app/" . $room->folder . "/coba.zip"), \ZipArchive::CREATE)) {
-                    $zip->addFile($file->getRealPath(), $file->getClientOriginalName());
-                    $zip->close();
+            if ($room->type_field) {
+                $convert_zip =  $nama_file_format_1 . ".zip";
+            } else {
+                $convert_zip =  $nama_file_format_2 . ".zip";
+            }
+            $data = [
+                'name' => $request->name,
+                'nim' => $request->nim,
+                'file' => $convert_zip,
+            ];
+            if ($room->type_field) {
+                $data = [...$data, "type" => $request->type];
+            }
+
+            $insertUpload = $room->uploads()->create($data);
+            if ($insertUpload) {
+                $zip = new \ZipArchive();
+                foreach ($request->file('files') as $file) {
+                    if ($zip->open(storage_path("app/" . $room->folder . "/" . $convert_zip), \ZipArchive::CREATE)) {
+                        $zip->addFile($file->getRealPath(), $file->getClientOriginalName());
+                        $zip->close();
+                    }
                 }
             }
         } else {
-            Storage::putFileAs($room->folder, $request->file('files')[0], $request->file('files')[0]->getClientOriginalName());
+            $extension = $request->file('files')[0]->extension();
+            if ($room->type_field) {
+                $single_file =  $nama_file_format_1 . "." . $extension;
+            } else {
+                $single_file =   $nama_file_format_2 . "." . $extension;
+            }
+            $data = [
+                'name' => $request->name,
+                'nim' => $request->nim,
+                'file' => $single_file,
+            ];
+            if ($room->type_field) {
+                $data = [...$data, "type" => $request->type];
+            }
+            $insertUpload = $room->uploads()->create($data);
+            if ($insertUpload) {
+                Storage::putFileAs($room->folder, $request->file('files')[0], $single_file);
+            }
         }
     }
     public function downloadAttch($attch)

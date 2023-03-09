@@ -15,7 +15,7 @@
             </div>
             <vue-countdown class="p-5" :time="UploadTime" @end="handleEnd" :interval="1000"
                 v-slot="{ days, hours, minutes, seconds }">
-                <div class="font-mono text-4xl text-gray-800">
+                <div class="font-mono text-4xl text-gray-600">
                     <span class="countdown" v-if="days > 0"><span :style="`--value:${days}`"></span>:</span>
                     <span class="countdown"><span :style="`--value:${hours}`"></span>:</span>
                     <span class="countdown"><span :style="`--value:${minutes}`"></span>:</span>
@@ -62,7 +62,13 @@
                                 <list-file :progress="form.progress" :name="acc.name" :size="acc.size"
                                     @removeFile="handleRemoveFile(index)"></list-file>
                             </ul>
-                            <p class="text-red-500 text-sm" v-if="form.errors.files">{{ form.errors.files }}</p>
+                            <div v-if="form.errors">
+                                <p class="text-red-500 text-sm my-2" v-for="(acc, index) in form.files" :key="index">
+                                    <span v-if="form.errors[`files.${index}`]">
+                                        File ke {{ index + 1 }} : {{ form.errors[`files.${index}`] }}
+                                    </span>
+                                </p>
+                            </div>
                         </div>
                         <div class="my-2 w-full space-y-2">
                             <button :disabled="form.processing" type="submit"
@@ -79,25 +85,21 @@
                 <table class="table w-full rounded-none">
                     <thead>
                         <tr>
-                            <th>No</th>
                             <th>NIM</th>
                             <th>Nama</th>
                             <th>File</th>
+                            <th v-if="room.type_field">Type</th>
                             <th>Tanggal</th>
                         </tr>
                     </thead>
                     <tbody>
                         <!-- row 1 -->
-                        <tr v-for="i in 30">
-                            <th>1</th>
-                            <td>21.240.0088</td>
-                            <td>Farriq Muwaffaqi</td>
-                            <td>
-                                <div class="bg-red">
-                                    _UJUA.zip
-                                </div>
-                            </td>
-                            <td>Tanggal</td>
+                        <tr v-for="upload in room.uploads">
+                            <td>{{ upload.nim }}</td>
+                            <td>{{ upload.name }}</td>
+                            <td>{{ upload.file }}</td>
+                            <td v-if="room.type_field">{{ upload.type }}</td>
+                            <td>{{ upload.created_at }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -114,6 +116,7 @@ import PlayRandomImg from '../../components/PlayRandomImg.vue';
 import Upload from '../../components/Upload.vue';
 import { ConvertDate } from '../../helper/convertDate';
 import UploaderLayout from '../../Layouts/UploaderLayout.vue';
+import { useToast } from 'vue-toastification'
 export default {
     layout: UploaderLayout,
     components: {
@@ -144,7 +147,8 @@ export default {
             const timeStart = ConvertDate(props.room.time_start);
             const timeEnd = ConvertDate(props.room.time_end);
             const expired = now > timeEnd
-            return { timeStart, timeEnd, now, expired }
+            const toast = useToast()
+            return { timeStart, timeEnd, now, expired, toast }
         }
     },
     data() {
@@ -168,11 +172,18 @@ export default {
         },
 
         handleUpload() {
-            this.form.post(this.$route('uploader.upload', this.room.name), { preserveScroll: true, preserveState: true })
+            const app = this;
+            this.form.post(this.$route('uploader.upload', this.room.name), {
+                preserveScroll: true, preserveState: true, onSuccess() {
+                    app.toast.success("Berhasil Upload")
+                    app.form.reset()
+                }
+            })
         },
         handleRemoveFile(index) {
             if (this.form.files.length) {
                 this.form.files.splice(index, 1)
+                this.form.errors[`files.${index}`] = null
             } else {
                 this.form.files = null;
             }

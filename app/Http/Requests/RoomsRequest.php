@@ -35,7 +35,7 @@ class RoomsRequest extends FormRequest
             ],
             'kelas' => 'required',
             'mata_kuliah' => 'required',
-            'extensions' => 'required|regex:/\.(\w)+/',
+            'extensions' => 'required',
         ];
     }
 
@@ -52,7 +52,6 @@ class RoomsRequest extends FormRequest
             'name.unique' => "nama sudah di gunakan",
             'kelas.required' => "Kelas harus di isi",
             'mata_kuliah.required' => "Mata Kuliah harus di isi",
-            'extensions.regex' => "extensions tidak valid"
         ];
     }
 }

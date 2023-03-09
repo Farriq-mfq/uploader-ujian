@@ -4,7 +4,7 @@
             :class="`w-full h-64 flex border-2 border-dashed border-gray-300 justify-center items-center rounded-lg ${isDragActive ? `bg-blue-100` : ``}`">
             <input v-bind="getInputProps()" />
             <div v-if="isDragActive" class="grid place-items-center first-letter gap-2">
-                <FolderOpenIcon class="text-primary h-24" />
+                <FolderOpenIcon class="text-blue-500 h-24" />
                 <p class="text-center text-gray-500 font-semibold divider">Letakan disini ...</p>
             </div>
             <div v-else class="grid place-items-center first-letter gap-2">

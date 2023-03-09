@@ -25,4 +25,8 @@ class Room extends Model
     {
         return $this->hasMany(AttchRoom::class, 'room_id');
     }
+    public function uploads(): HasMany
+    {
+        return $this->hasMany(Upload::class, 'room_id');
+    }
 }
