@@ -127,7 +127,7 @@ export default {
         Attch
     },
     props: {
-        room: Object | null
+        room: Object | null,
     },
     computed: {
         startTime() {

@@ -38,6 +38,7 @@ Route::prefix('private')->group(function () {
 
     Route::prefix('folder')->group(function () {
         Route::get("/", [FolderController::class, 'index'])->name('folder');
+        Route::get("/{room}/download", [FolderController::class, 'download_file'])->name('folder.download');
     });
 });
 
