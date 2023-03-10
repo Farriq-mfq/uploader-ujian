@@ -28,8 +28,7 @@
                 <div class=" px-4 py-2 rounded-sm max-w-xl mx-auto w-full grid gap-3">
                     <div class="grid gap-2" v-if="room.attchs.length">
                         <h3 class="font-bold mb-2 uppercase">Attchments</h3>
-                        <Attch @handle-download="downloadAttch(attch.id)" :name="attch.file" v-for="attch in room.attchs"
-                            :key="attch.id" />
+                        <Attch v-for="attch in room.attchs" :key="attch.id" :attch="attch" />
                     </div>
                     <h3 class="font-bold uppercase">
                         Room {{ room.name }}
@@ -191,9 +190,6 @@ export default {
         handleCencel() {
             this.form.cancel()
         },
-        downloadAttch(id) {
-            this.$inertia.get(this.$route('uploader.download.attch', id))
-        }
     }
 
 }

@@ -1,6 +1,11 @@
 <template>
     <div class="grid lg:grid-cols-4 gap-4">
-        <Folder v-for="room in rooms" :key="room.id" :room="room" @handle-download="handleDownload" />
+        <div v-if="!rooms.length">
+            Folder Belum ada
+        </div>
+        <div v-if="rooms.length">
+            <Folder v-for="room in rooms" :key="room.id" :room="room" @handle-download="handleDownload" />
+        </div>
     </div>
 </template>
 <script>

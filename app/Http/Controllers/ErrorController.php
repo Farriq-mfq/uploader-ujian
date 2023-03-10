@@ -16,4 +16,8 @@ class ErrorController extends Controller
     {
         return Inertia::render('error/block', ['ip' => gethostbyname(gethostname())]);
     }
+    public function not_found()
+    {
+        return Inertia::render('error/notFound');
+    }
 }

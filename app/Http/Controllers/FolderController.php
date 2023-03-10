@@ -36,4 +36,8 @@ class FolderController extends Controller
         }
         return Response::download(storage_path('app/' . $folder_name),$folder_name,['Content-Type: application/zip']);
     }
+    public function detail()
+    {
+        return Inertia::render('folder/detail');
+    }
 }
