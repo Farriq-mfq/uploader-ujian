@@ -88,7 +88,7 @@
                             <th>Nama</th>
                             <th>File</th>
                             <th v-if="room.type_field">Type</th>
-                            <th>Tanggal</th>
+                            <th>Timestamps</th>
                         </tr>
                     </thead>
                     <tbody>

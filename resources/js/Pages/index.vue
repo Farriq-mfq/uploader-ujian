@@ -42,7 +42,12 @@
 import BaseLayout from '../Layouts/BaseLayout.vue';
 export default {
     layout: BaseLayout,
-
+    props: {
+        auth: Object
+    },
+    mounted() {
+        console.log(this.auth)
+    }
 
 
 }
