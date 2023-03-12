@@ -31,8 +31,8 @@ class RoomsRequest extends FormRequest
             "ip.*" => "required|ip",
             'folder' => [
                 'required',
-                'unique:rooms,folder' . request('room'),
-                new FolderRule()
+                new FolderRule(),
+                
             ],
             'kelas' => 'required',
             'mata_kuliah' => 'required',

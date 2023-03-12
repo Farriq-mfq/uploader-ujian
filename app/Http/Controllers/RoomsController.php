@@ -70,6 +70,7 @@ class RoomsController extends Controller
         ];
 
 
+        $create = $this->room->create($data);
         if ($request->ftp) {
             try {
                 if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $request->ftp, $match)) {
@@ -84,7 +85,6 @@ class RoomsController extends Controller
                     $config->setPassive(true);
 
                     $client = new FtpClient($connection);
-                    $create = $this->room->create($data);
                     if ($create) {
                         $client->createDir($request->folder);
                         $connection->close();
@@ -93,11 +93,9 @@ class RoomsController extends Controller
             } catch (\Throwable $ex) {
                 return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
             }
-        } else {
-            $create = $this->room->create($data);
-            if ($create) {
-                Storage::createDirectory($request->folder);
-            }
+        }
+        if ($create) {
+            Storage::createDirectory($request->folder);
         }
     }
 
@@ -137,6 +135,7 @@ class RoomsController extends Controller
             "type_field" => $request->type_field,
             'ftp' => $request->ftp
         ];
+        $update = $this->room->where('id', $id)->update($data);
         if ($request->ftp) {
             try {
                 if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $request->ftp, $match)) {
@@ -151,15 +150,18 @@ class RoomsController extends Controller
                     $config->setPassive(true);
 
                     $client = new FtpClient($connection);
-                    $update = $this->room->where('id', $id)->update($data);
                     if ($update) {
-                        if ($room->folder != $request->folder) {
-                            $createDir = $client->createDir($request->folder);
-                            if ($createDir) {
-                                foreach ($client->listDir($room->folder) as $file) {
-                                    $client->move($room->folder . "/" . $file, $request->folder);
+                        if (!$client->isDir($room->folder)) {
+                            $client->createDir($room->folder);
+                        } else {
+                            if ($room->folder != $request->folder) {
+                                $createDir = $client->createDir($request->folder);
+                                if ($createDir) {
+                                    foreach ($client->listDir($room->folder) as $file) {
+                                        $client->move($room->folder . "/" . $file, $request->folder);
+                                    }
+                                    $client->removeDir($room->folder);
                                 }
-                                $client->removeDir($room->folder);
                             }
                         }
                         Storage::move("attch/" . $room->name . '/', "attch/" . $request->name);
@@ -169,13 +171,11 @@ class RoomsController extends Controller
             } catch (\Throwable $ex) {
                 return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
             }
-        } else {
-            $update = $this->room->where('id', $id)->update($data);
-            if ($update) {
-                if ($room) {
-                    Storage::move($room->folder . '/', $request->folder);
-                    Storage::move("attch/" . $room->name . '/', "attch/" . $request->name);
-                }
+        }
+        if ($update) {
+            if ($room) {
+                Storage::move($room->folder . '/', $request->folder);
+                Storage::move("attch/" . $room->name . '/', "attch/" . $request->name);
             }
         }
     }
@@ -186,6 +186,27 @@ class RoomsController extends Controller
     public function destroy(string $id)
     {
         $find = $this->room->with('attchs')->find($id);
+        if ($find->ftp) {
+            try {
+                if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $find->ftp, $match)) {
+                    if (!extension_loaded('ftp')) {
+                        throw new \RuntimeException("FTP extension not loaded.");
+                    }
+
+                    $connection = new FtpConnection($match[3], $match[1], $match[2]);
+                    $connection->open();
+
+                    $config = new FtpConfig($connection);
+                    $config->setPassive(true);
+
+                    $client = new FtpClient($connection);
+                    $client->removeDir($find->folder);
+                    $connection->close();
+                }
+            } catch (\Throwable $ex) {
+                return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
+            }
+        }
         foreach ($find->attchs as $file) {
             Storage::delete("attch/" . $find->name . "/" . $file->file);
         }
@@ -203,6 +224,27 @@ class RoomsController extends Controller
         $rooms = $this->room->where('id', ">", 0)->get();
         foreach ($rooms as $room) {
             Storage::deleteDirectory($room->folder);
+            if ($room->ftp) {
+                try {
+                    if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $room->ftp, $match)) {
+                        if (!extension_loaded('ftp')) {
+                            throw new \RuntimeException("FTP extension not loaded.");
+                        }
+
+                        $connection = new FtpConnection($match[3], $match[1], $match[2]);
+                        $connection->open();
+
+                        $config = new FtpConfig($connection);
+                        $config->setPassive(true);
+
+                        $client = new FtpClient($connection);
+                        $client->removeDir($room->folder);
+                        $connection->close();
+                    }
+                } catch (\Throwable $ex) {
+                    return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
+                }
+            }
         }
         $delete = $this->room->where('id', ">", 0)->delete();
         if ($delete) {
@@ -252,14 +294,6 @@ class RoomsController extends Controller
                 ];
                 $created = AttchRoom::create($data);
                 if ($created) {
-                    // $ftp_con = ftp_connect('127.0.0.1');
-                    // if ($ftp_con) {
-                    //     $login = ftp_login($ftp_con, 'farriq', "");
-                    //     if ($login) {
-                    //         ftp_put($ftp_con, $name, $attch);
-                    //         // dd(ftp_nlist($ftp_con, '.'));
-                    //     }
-                    // }
                     Storage::putFileAs("attch/" . $get_room->name . "/", $attch, $name);
                 }
             }

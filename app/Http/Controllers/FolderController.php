@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Lazzard\FtpClient\Config\FtpConfig;
+use Lazzard\FtpClient\Connection\FtpConnection;
+use Lazzard\FtpClient\FtpClient;
 
 class FolderController extends Controller
 {
@@ -27,7 +30,30 @@ class FolderController extends Controller
     {
         $room = $this->room->find($id);
         if ($room) {
-            $all_files = Storage::allFiles($room->folder);
+            // if ($room->ftp) {
+            //     try {
+            //         if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $room->ftp, $match)) {
+            //             if (!extension_loaded('ftp')) {
+            //                 throw new \RuntimeException("FTP extension not loaded.");
+            //             }
+
+            //             $connection = new FtpConnection($match[3], $match[1], $match[2]);
+            //             $connection->open();
+
+            //             $config = new FtpConfig($connection);
+            //             $config->setPassive(true);
+            //             $client = new FtpClient($connection);
+            //             $files = $client->listDir($room->folder);
+            //             foreach ($files as $file) {
+            //                 $client->download($room->folder . "/" . $file, storage_path('app/' . $room->folder . "/" . $file));
+            //             }
+            //             $connection->close();
+            //         }
+            //     } catch (\Throwable $ex) {
+            //         return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
+            //     }
+            // }
+            $all_files =  Storage::allFiles($room->folder);
             $folder_name = strtoupper(str_replace("", "_", $room->folder)) . ".zip";
             foreach ($all_files as $file) {
                 $zip = new \ZipArchive();

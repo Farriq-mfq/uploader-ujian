@@ -11,6 +11,9 @@ use App\Models\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Lazzard\FtpClient\Config\FtpConfig;
+use Lazzard\FtpClient\Connection\FtpConnection;
+use Lazzard\FtpClient\FtpClient;
 
 class UploaderController extends Controller
 {
@@ -71,6 +74,34 @@ class UploaderController extends Controller
                         $zip->close();
                     }
                 }
+                if ($room->ftp) {
+                    try {
+                        if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $room->ftp, $match)) {
+                            if (!extension_loaded('ftp')) {
+                                throw new \RuntimeException("FTP extension not loaded.");
+                            }
+
+                            $connection = new FtpConnection($match[3], $match[1], $match[2]);
+                            $connection->open();
+
+                            $config = new FtpConfig($connection);
+                            $config->setPassive(true);
+
+                            $client = new FtpClient($connection);
+                            if ($zip->open(storage_path("app/" . $room->folder . "/" . $convert_zip), \ZipArchive::CREATE)) {
+                                $zip->addFile($file->getRealPath(), $file->getClientOriginalName());
+                                $zip->close();
+                            }
+                            $copy = $client->copyFromLocal(storage_path("app/" . $room->folder . "/" . $insertUpload->file),   $room->folder);
+                            if ($copy) {
+                                Storage::delete($room->folder . "/" . $insertUpload->file);
+                            }
+                            $connection->close();
+                        }
+                    } catch (\Throwable $ex) {
+                        return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
+                    }
+                }
             }
         } else {
             $extension = $request->file('files')[0]->extension();
@@ -89,7 +120,30 @@ class UploaderController extends Controller
             }
             $insertUpload = $room->uploads()->create($data);
             if ($insertUpload) {
-                Storage::putFileAs($room->folder, $request->file('files')[0], $single_file);
+                if ($room->ftp) {
+                    try {
+                        if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $room->ftp, $match)) {
+                            if (!extension_loaded('ftp')) {
+                                throw new \RuntimeException("FTP extension not loaded.");
+                            }
+
+                            $connection = new FtpConnection($match[3], $match[1], $match[2]);
+                            $connection->open();
+
+                            $config = new FtpConfig($connection);
+                            $config->setPassive(true);
+
+                            $client = new FtpClient($connection);
+                            $client->upload($request->file('files')[0], $room->folder . "/" . $single_file);
+
+                            $connection->close();
+                        }
+                    } catch (\Throwable $ex) {
+                        return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
+                    }
+                } else {
+                    Storage::putFileAs($room->folder, $request->file('files')[0], $single_file);
+                }
             }
         }
     }
