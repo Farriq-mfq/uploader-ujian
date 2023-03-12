@@ -81,6 +81,7 @@
                                     </span>
                                 </p>
                             </div>
+                            <p class="text-red-500 text-sm" v-if="form.errors.files">{{ form.errors.files }}</p>
                         </div>
                         <div class="my-2 w-full space-y-2">
                             <button :disabled="form.processing" type="submit"

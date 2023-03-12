@@ -30,40 +30,25 @@ class FolderController extends Controller
     {
         $room = $this->room->find($id);
         if ($room) {
-            // if ($room->ftp) {
-            //     try {
-            //         if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $room->ftp, $match)) {
-            //             if (!extension_loaded('ftp')) {
-            //                 throw new \RuntimeException("FTP extension not loaded.");
-            //             }
-
-            //             $connection = new FtpConnection($match[3], $match[1], $match[2]);
-            //             $connection->open();
-
-            //             $config = new FtpConfig($connection);
-            //             $config->setPassive(true);
-            //             $client = new FtpClient($connection);
-            //             $files = $client->listDir($room->folder);
-            //             foreach ($files as $file) {
-            //                 $client->download($room->folder . "/" . $file, storage_path('app/' . $room->folder . "/" . $file));
-            //             }
-            //             $connection->close();
-            //         }
-            //     } catch (\Throwable $ex) {
-            //         return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
-            //     }
-            // }
-            $all_files =  Storage::allFiles($room->folder);
-            $folder_name = strtoupper(str_replace("", "_", $room->folder)) . ".zip";
-            foreach ($all_files as $file) {
-                $zip = new \ZipArchive();
-                if ($zip->open(storage_path('app/' . $folder_name), \ZipArchive::CREATE)) {
-                    $zip->addFile(storage_path('app/' . $file), $file);
-                    $zip->close();
+            if (!$room->ftp) {
+                $all_files =  Storage::allFiles($room->folder);
+                $folder_name = strtoupper(str_replace("", "_", $room->folder)) . ".zip";
+                if (count($all_files)) {
+                    foreach ($all_files as $file) {
+                        $zip = new \ZipArchive();
+                        if ($zip->open(storage_path('app/' . $folder_name), \ZipArchive::CREATE)) {
+                            $zip->addFile(storage_path('app/' . $file), $file);
+                            $zip->close();
+                        }
+                    }
+                    return Response::download(storage_path('app/' . $folder_name), $folder_name, ['Content-Type: application/zip']);
+                }else{
+                    return redirect()->back();
                 }
+            } else {
+                return redirect()->back()->withErrors(['ftp' => "file sudah tersedia di local"]);
             }
         }
-        return Response::download(storage_path('app/' . $folder_name), $folder_name, ['Content-Type: application/zip']);
     }
     public function detail(Request $request, $room)
     {
@@ -76,6 +61,77 @@ class FolderController extends Controller
         $roomName = $this->room->select('name', 'id')->find($room);
         if ($room) {
             return Inertia::render('folder/detail', ['uploads' => $uploads, 'roomName' => $roomName]);
+        }
+    }
+    public function remove_upload($uploader)
+    {
+        $upload = $this->upload->with("room")->find($uploader);
+
+        $deleteUpload = $this->upload->where('id', $uploader)->delete();
+        if ($deleteUpload) {
+            if ($upload->room->ftp) {
+                try {
+                    if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $upload->room->ftp, $match)) {
+                        if (!extension_loaded('ftp')) {
+                            throw new \RuntimeException("FTP extension not loaded.");
+                        }
+
+                        $connection = new FtpConnection($match[3], $match[1], $match[2]);
+                        $connection->open();
+
+                        $config = new FtpConfig($connection);
+                        $config->setPassive(true);
+
+                        $client = new FtpClient($connection);
+                        if ($client->isExists($upload->room->folder . "/" . $upload->file)) {
+                            $client->removeFile($upload->room->folder . "/" . $upload->file);
+                        }
+                        $connection->close();
+                    }
+                } catch (\Throwable $th) {
+                    return redirect()->back()->withErrors(['ftp' => $th->getMessage()]);
+                }
+            } else {
+                if (Storage::exists($upload->room->folder . "/" . $upload->file)) {
+                    Storage::delete($upload->room->folder . "/" . $upload->file);
+                }
+            }
+        }
+    }
+    public function remove_all($room)
+    {
+        $room = $this->room->find($room);
+        $deleteAll = $room->uploads()->delete();
+        if ($deleteAll) {
+            if ($room->ftp) {
+                try {
+                    if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $room->ftp, $match)) {
+                        if (!extension_loaded('ftp')) {
+                            throw new \RuntimeException("FTP extension not loaded.");
+                        }
+
+                        $connection = new FtpConnection($match[3], $match[1], $match[2]);
+                        $connection->open();
+
+                        $config = new FtpConfig($connection);
+                        $config->setPassive(true);
+
+                        $client = new FtpClient($connection);
+                        $all_files = $client->listDir($room->folder);
+                        foreach ($all_files as $file) {
+                            if ($client->isExists($room->folder . "/" . $file)) {
+                                $client->removeFile($room->folder . "/" . $file);
+                            }
+                        }
+                        $connection->close();
+                    }
+                } catch (\Throwable $th) {
+                    return redirect()->back()->withErrors(['ftp' => $th->getMessage()]);
+                }
+            } else {
+                $files =  Storage::allFiles($room->folder);
+                Storage::delete($files);
+            }
         }
     }
 }

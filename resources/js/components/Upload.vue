@@ -12,7 +12,7 @@
                 <p class=" text-center text-gray-500 font-semibold leading-tight">Drag 'n' drop disini, atau <br><span
                         class="divider">Atau</span>
                 <div
-                    class="bg-blue-500 hover:bg-blue-500/90 p-2 rounded-lg text-white cursor-pointer btn border-none font-bold leading-tight hover:bg-primary btn-block text-sm">
+                    class="bg-blue-500 hover:bg-blue-500/90 p-2 rounded-lg text-white cursor-pointer btn border-none font-bold leading-tight hover:bg-blue-500/90 btn-block text-sm">
                     Pilih file</div>
                 </p>
             </div>

@@ -5,12 +5,15 @@
         <FolderIcon class="text-blue-500 h-48" />
         </Link>
         <h1 class="text-xl font-bold">{{ room.folder }}</h1>
-        <div class="flex space-x-2 items-center">
+        <div class="flex space-x-2 items-center" v-if="!room.ftp">
             <a :href="$route('folder.download', room.id)" class="btn btn-sm btn-primary text-white tooltip flex space-x-2"
                 data-tip="Download File">
                 <ArrowDownTrayIcon class="h-5" />
                 <span class="text-sm">Download</span>
             </a>
+        </div>
+        <div v-else class="kbd">
+            Storage Local FTP
         </div>
         <div class="font-mono text-slate-900 text-2xl font-bold absolute top-4 right-4 tooltip" data-tip="Total Uploader">
             {{ room.uploads.length }}

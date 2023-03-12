@@ -41,6 +41,8 @@ Route::prefix('private')->group(function () {
         Route::get("/", [FolderController::class, 'index'])->name('folder.index');
         Route::get("/{room}/download", [FolderController::class, 'download_file'])->name('folder.download');
         Route::get("/{room}/detail", [FolderController::class, 'detail'])->name('folder.detail');
+        Route::delete("/detail/{uploader}/delete", [FolderController::class, 'remove_upload'])->name('folder.delete');
+        Route::delete("/detail/{room}/delete/all", [FolderController::class, 'remove_all'])->name('folder.remove_all');
     });
     // authentication
     Route::get('/login', [AuthController::class, 'index'])->name('login')->middleware('role_login:guest');

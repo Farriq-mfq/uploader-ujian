@@ -39,6 +39,7 @@ class UploaderRequest extends FormRequest
                 new NimRule()
             ],
             'type' => $room->type_field ? 'required|max:1|min:1' : '',
+            'files' => 'required',
             'files.*' => [
                 'required',
                 'file',
@@ -55,7 +56,8 @@ class UploaderRequest extends FormRequest
             'files.*.required' => "File harus ada",
             'files.*.mimes' => "extensions yang diizinkan hanya : " . $room->extensions,
             'type.required' => "Type soal harus di isi",
-            'nim.regex' => "Format NIM tidak valid"
+            'nim.regex' => "Format NIM tidak valid",
+            'files.required' => "File harus ada!"
 
         ];
     }

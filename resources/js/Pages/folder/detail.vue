@@ -10,10 +10,14 @@
             <input v-model="keyword" type="search" placeholder="Cari nama atau NIM"
                 class="input input-bordered w-full max-w-xs" />
         </div>
+        <Link :href="$route('folder.detail', roomName.id)" :only="['uploads']" preserve-state preserve-scroll type="button"
+            class="btn btn-primary mb-3" as="button">Refresh
+        </Link>
         <div class="mb-3 btn-group-horizontal space-x-2" v-if="uploads.data.length">
-            <button type="button" class="btn btn-error">Hapus Semua</button>
+            <button @click.prevent="handleDeleteAll" type="button" class="btn btn-error">Hapus
+                Semua</button>
         </div>
-        <div class="overflow-x-auto w-full card shadow-xl p-2">
+        <div class="overflow-x-auto w-full card shadow-xl p-2" v-if="uploads.data.length">
             <table class="table w-full">
                 <thead>
                     <tr>
@@ -21,7 +25,6 @@
                         <th>NIM</th>
                         <th>Type</th>
                         <th>File</th>
-                        <th>FIle check</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -31,7 +34,6 @@
                         <td>{{ upload.nim }}</td>
                         <td>{{ upload.type == null ? "Tidak diberi type soal" : upload.type }}</td>
                         <td>{{ upload.file }}</td>
-                        <th>FIle check</th>
                         <td>
                             <button class="btn btn-error btn-sm tooltip" data-tip="Hapus Uploader" type="button"
                                 @click="handleDelete(upload.id)">
@@ -43,6 +45,7 @@
             </table>
             <Pagination v-if="uploads.data.length" :links="uploads.links" />
         </div>
+        <p v-if="!uploads.data.length">Data belum ada</p>
     </div>
 </template>
 <script>
@@ -50,12 +53,12 @@ import { TrashIcon } from '@heroicons/vue/24/solid';
 import { Link } from '@inertiajs/vue3';
 import Pagination from '../../components/Pagination.vue';
 import BaseLayout from '../../Layouts/BaseLayout.vue';
-
+import Swal from 'sweetalert2';
 export default {
     layout: BaseLayout,
     props: {
         uploads: Array,
-        roomName: String
+        roomName: Object
     },
     data() {
         return {
@@ -74,8 +77,52 @@ export default {
     components: { Link, Pagination, TrashIcon },
     methods: {
         handleDelete(id) {
-            console.log(this.$props)
-            alert('ok')
+            Swal.fire({
+                title: 'Yakin ?',
+                text: "Kamu Akan menghapus data salah satu data folder ini !",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya hapus aja !',
+                cancelButtonText: "Batalkan"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.$inertia.delete(this.$route('folder.delete', id), {}, {
+                        preserveState: true, preserveScroll: true, onSuccess: () => {
+                            Swal.fire(
+                                'Berhasil!',
+                                'Berhasil menghapus salah satu data folder.',
+                                'success'
+                            )
+                        }
+                    })
+                }
+            })
+        },
+        handleDeleteAll() {
+            Swal.fire({
+                title: 'Yakin ?',
+                text: "Kamu Akan menghapus semua data di folder ini !",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya hapus aja !',
+                cancelButtonText: "Batalkan"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.$inertia.delete(this.$route('folder.remove_all', this.roomName.id), {}, {
+                        preserveState: true, preserveScroll: true, onSuccess: () => {
+                            Swal.fire(
+                                'Berhasil!',
+                                'Berhasil menghapus semua data folder.',
+                                'success'
+                            )
+                        }
+                    })
+                }
+            })
         }
     }
 }
