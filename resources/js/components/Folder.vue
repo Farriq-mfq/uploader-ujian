@@ -1,7 +1,7 @@
 <template>
     <div
         class="w-full bg-white shadow-sm h-auto border flex justify-center flex-col items-center gap-3 rounded-3xl p-3 relative">
-        <Link :href="$route('folder.detail', room.id)">
+        <Link as="button" :href="$route('folder.detail', room.id)">
         <FolderIcon class="text-blue-500 h-48" />
         </Link>
         <h1 class="text-xl font-bold">{{ room.folder }}</h1>

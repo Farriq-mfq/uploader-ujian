@@ -4,7 +4,7 @@
         <div class="mb-3">
             <Link :href="$route('rooms.create')" class="btn btn-primary">Buat rooms</Link>
         </div>
-        <div class="mb-3" v-if="rooms.data.length">
+        <div class="mb-3">
             <input v-model="keyword" type="search" placeholder="Cari nama rooms"
                 class="input input-bordered w-full max-w-xs" />
         </div>

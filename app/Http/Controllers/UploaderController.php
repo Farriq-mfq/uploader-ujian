@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\FTP;
 use App\Http\Requests\UploaderRequest;
 use App\Models\AllowIp;
 use App\Models\AttchRoom;

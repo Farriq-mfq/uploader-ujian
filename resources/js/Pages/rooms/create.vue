@@ -70,6 +70,15 @@
 
                 </div>
                 <div class="form-control w-full">
+                    <label class="label ">
+                        <span class="label-text">Masukan FTP <kbd class="kbd">cth :
+                                ftp://username:password@192.168.20.20/uploads</kbd></span>
+                    </label>
+                    <input type="text" v-model="form.ftp" placeholder="Masukan FTP" class="input input-bordered w-full" />
+                    <p class="text-red-500 text-sm" v-if="form.errors.ftp">{{ form.errors.ftp }}</p>
+                    <p v-if="form.ftp && form.processing">Connect... ke FTP</p>
+                </div>
+                <div class="form-control w-full">
                     <label class="label">
                         <span class="label-text">Field Type Soal</span>
                     </label>
@@ -120,6 +129,7 @@ export default {
                 status: false,
                 type_field: false,
                 extensions: null,
+                ftp: null,
                 ip: []
             }),
             copyUrl: "",
@@ -141,7 +151,7 @@ export default {
                     }, this.timer * 1000)
                     this.copyUrl = this.$route('uploader.show', this.form.name)
                     this.toast.success("Berhasil membuat rooms");
-                    this.form.reset("name", "TimeRanges", "ip", "extensions", "kelas", 'mata_kuliah', "folder", "status")
+                    this.form.reset("name", "TimeRanges", "ip", "extensions", "kelas", 'mata_kuliah', "folder", "status", "ftp")
                     this.form.clearErrors()
                 },
             })

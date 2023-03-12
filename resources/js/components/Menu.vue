@@ -23,7 +23,7 @@
             </BaseLink>
         </li>
         <li>
-            <BaseLink path="folder" #title>
+            <BaseLink path="folder.index" #title>
                 <div class="flex space-x-3 items-center">
                     <FolderOpenIcon class="h-6 w-6 text-white" />
                     <span>Folder</span>

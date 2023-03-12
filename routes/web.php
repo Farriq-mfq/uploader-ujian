@@ -38,7 +38,7 @@ Route::prefix('private')->group(function () {
 
 
     Route::prefix('folder')->middleware('role_login:auth,master')->group(function () {
-        Route::get("/", [FolderController::class, 'index'])->name('folder');
+        Route::get("/", [FolderController::class, 'index'])->name('folder.index');
         Route::get("/{room}/download", [FolderController::class, 'download_file'])->name('folder.download');
         Route::get("/{room}/detail", [FolderController::class, 'detail'])->name('folder.detail');
     });

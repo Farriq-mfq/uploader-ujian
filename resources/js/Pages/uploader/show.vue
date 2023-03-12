@@ -1,8 +1,21 @@
 <template >
     <div v-if="room && startTime" class="w-full min-h-[80vh] grid place-items-center">
-        <div class="max-w-xl bg-white w-full shadow-sm rounded-lg p-3 border flex items-center space-x-2">
-            <FaceFrownIcon class="h-20 text-blue-500" />
-            <span class="font-bold text-lg">Ujian belum mulai</span>
+        <div class="max-w-xl bg-white w-full shadow-sm rounded-lg p-3 border flex items-center space-x-2 justify-center">
+            <div class="font-mono text-md text-gray-600 uppercase font-bold">
+                Ujian di mulai
+            </div>
+            <vue-countdown class="p-5" :time="UploadTimeStart" @end="handleEnd" :interval="1000"
+                v-slot="{ days, hours, minutes, seconds }">
+                <div class="font-mono text-3xl text-gray-600">
+                    <span class="countdown" v-if="days > 0"><span :style="`--value:${days}`"></span>:</span>
+                    <span class="countdown"><span :style="`--value:${hours}`"></span>:</span>
+                    <span class="countdown"><span :style="`--value:${minutes}`"></span>:</span>
+                    <span class="countdown"><span :style="`--value:${seconds}`"></span></span>
+                </div>
+            </vue-countdown>
+            <div class="font-mono text-md text-gray-600 uppercase font-bold">
+                Lagi
+            </div>
         </div>
     </div>
     <PlayRandomImg :show="room && expired" message="WAKTU HABIS" />
@@ -138,6 +151,9 @@ export default {
 
         UploadTime() {
             return this.timeEnd - this.now
+        },
+        UploadTimeStart() {
+            return this.timeStart - this.now
         },
     },
     setup(props) {

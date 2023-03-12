@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use App\Models\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
@@ -11,9 +12,11 @@ use Inertia\Inertia;
 class FolderController extends Controller
 {
     private Room $room;
+    private Upload $upload;
     public function __construct()
     {
         $this->room = new Room();
+        $this->upload = new Upload();
     }
     public function index()
     {
@@ -34,10 +37,19 @@ class FolderController extends Controller
                 }
             }
         }
-        return Response::download(storage_path('app/' . $folder_name),$folder_name,['Content-Type: application/zip']);
+        return Response::download(storage_path('app/' . $folder_name), $folder_name, ['Content-Type: application/zip']);
     }
-    public function detail()
+    public function detail(Request $request, $room)
     {
-        return Inertia::render('folder/detail');
+        $keyword = $request->keyword;
+        if ($keyword != null) {
+            $uploads = $this->upload->where('room_id', $room)->where('name', "LIKE", "%" . $keyword . "%")->orWhere('nim', "LIKE", "%" . $keyword . "%")->paginate(5);
+        } else {
+            $uploads = $this->upload->where('room_id', $room)->with('room')->paginate(5);
+        }
+        $roomName = $this->room->select('name', 'id')->find($room);
+        if ($room) {
+            return Inertia::render('folder/detail', ['uploads' => $uploads, 'roomName' => $roomName]);
+        }
     }
 }

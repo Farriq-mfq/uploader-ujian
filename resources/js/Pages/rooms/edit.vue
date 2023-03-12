@@ -56,6 +56,15 @@
 
             </div>
             <div class="form-control w-full">
+                <label class="label ">
+                    <span class="label-text">Masukan FTP <kbd class="kbd">cth :
+                            ftp://username:password@192.168.20.20/uploads</kbd></span>
+                </label>
+                <input type="text" v-model="form.ftp" placeholder="Masukan FTP" class="input input-bordered w-full" />
+                <p class="text-red-500 text-sm" v-if="form.errors.ftp">{{ form.errors.ftp }}</p>
+                <p v-if="form.ftp && form.processing">Connect... ke FTP</p>
+            </div>
+            <div class="form-control w-full">
                 <label class="label">
                     <span class="label-text">Field Type Soal</span>
                 </label>
@@ -105,7 +114,8 @@ export default {
                 mata_kuliah: null,
                 extensions: null,
                 folder: null,
-                type_field: false
+                type_field: false,
+                ftp: null
             }),
         };
     },
@@ -118,6 +128,7 @@ export default {
         this.form.folder = this.room.folder
         this.form.mata_kuliah = this.room.mata_kuliah
         this.form.type_field = this.room.type_field == 1 ? true : false
+        this.form.ftp = this.room.ftp
     },
     methods: {
         async handleSubmit() {
