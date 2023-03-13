@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\FolderController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\operatorController;
 use App\Http\Controllers\RoomsController;
 use App\Http\Controllers\UploaderController;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,8 @@ Route::prefix('private')->group(function () {
         Route::delete("/detail/{uploader}/delete", [FolderController::class, 'remove_upload'])->name('folder.delete');
         Route::delete("/detail/{room}/delete/all", [FolderController::class, 'remove_all'])->name('folder.remove_all');
     });
+
+    Route::resource('operator', operatorController::class)->middleware('role_login:auth,master');
     // authentication
     Route::get('/login', [AuthController::class, 'index'])->name('login')->middleware('role_login:guest');
     Route::post('/login', [AuthController::class, 'login'])->name('login.action')->middleware('role_login:guest');

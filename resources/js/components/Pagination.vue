@@ -11,10 +11,8 @@ import { Link } from '@inertiajs/vue3';
 
 export default {
     props: {
-        links: { type: Object, required: true }
-    },
-    mounted() {
-        console.log(this.links);
+        links: { type: Object, required: true },
+       
     },
     components: { Link }
 }

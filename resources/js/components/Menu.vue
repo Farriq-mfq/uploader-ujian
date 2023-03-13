@@ -7,7 +7,7 @@
             </h1>
         </div>
         <li>
-            <BaseLink path="dashboard" #title>
+            <BaseLink path="dashboard" :active="true" #title>
                 <div class="flex space-x-3 items-center">
                     <HomeIcon class="h-6 w-6 text-white" />
                     <span>Home</span>
@@ -15,7 +15,7 @@
             </BaseLink>
         </li>
         <li>
-            <BaseLink path="rooms.index" #title>
+            <BaseLink path="rooms.index" :active="false" #title>
                 <div class="flex space-x-3 items-center">
                     <InboxStackIcon class="h-6 w-6 text-white" />
                     <span>Rooms</span>
@@ -23,19 +23,27 @@
             </BaseLink>
         </li>
         <li>
-            <BaseLink path="folder.index" #title>
+            <BaseLink path="folder.index"  :active="false" #title>
                 <div class="flex space-x-3 items-center">
                     <FolderOpenIcon class="h-6 w-6 text-white" />
                     <span>Folder</span>
                 </div>
             </BaseLink>
         </li>
-               
+        <li>
+            <BaseLink path="operator.index" :active="false" #title>
+                <div class="flex space-x-3 items-center">
+                    <UserIcon class="h-6 w-6 text-white" />
+                    <span>Operator</span>
+                </div>
+            </BaseLink>
+        </li>  
     </ul>
 </template>
 <script>
-import { HomeIcon, FolderOpenIcon, ComputerDesktopIcon, InboxStackIcon } from '@heroicons/vue/24/solid'
+import { HomeIcon, FolderOpenIcon, ComputerDesktopIcon, InboxStackIcon, UserIcon } from '@heroicons/vue/24/solid'
 import BaseLink from './BaseLink.vue';
+import { usePage } from '@inertiajs/vue3';
 
 export default {
     components: {
@@ -43,7 +51,19 @@ export default {
         HomeIcon,
         FolderOpenIcon,
         ComputerDesktopIcon,
-        InboxStackIcon
-    }
+        InboxStackIcon, UserIcon
+    },
+    props: {
+        auth: Object
+    },
+    data() {
+        return {
+            current: this.currentRoute
+        }
+    },
+    setup() {
+        const { currentRoute } = usePage().props
+        return { currentRoute }
+    },
 }
 </script>
