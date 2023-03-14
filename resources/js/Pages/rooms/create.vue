@@ -80,6 +80,15 @@
                 </div>
                 <div class="form-control w-full">
                     <label class="label">
+                        <span class="label-text">Operator</span>
+                    </label>
+                    <select class="select select-bordered w-full" v-model="form.operator">
+                        <option disabled selected>Pilih operator</option>
+                        <option v-for="operator in operators" :value="operator.id" :key="operator.id">{{ operator.name }}</option>
+                    </select>
+                </div>
+                <div class="form-control w-full">
+                    <label class="label">
                         <span class="label-text">Field Type Soal</span>
                     </label>
                     <input type="checkbox" v-model="form.type_field" class="toggle toggle-primary" />
@@ -112,10 +121,10 @@ export default {
     },
     props: {
         errors: Object,
+        operators: Array
     },
     setup() {
         const toast = useToast()
-
         return { toast }
     },
     data() {
@@ -130,6 +139,7 @@ export default {
                 type_field: false,
                 extensions: null,
                 ftp: null,
+                operator: null,
                 ip: []
             }),
             copyUrl: "",

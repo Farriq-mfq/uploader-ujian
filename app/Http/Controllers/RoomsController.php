@@ -6,6 +6,7 @@ use App\Http\Requests\RoomsRequest;
 use App\Models\AllowIp;
 use App\Models\AttchRoom;
 use App\Models\Room;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -20,10 +21,12 @@ class RoomsController extends Controller
 
     private Room $room;
     private AllowIp $ips;
+    private User $user;
     public function __construct()
     {
         $this->room = new Room();
         $this->ips = new AllowIp();
+        $this->user = new User();
     }
 
     /**
@@ -46,7 +49,8 @@ class RoomsController extends Controller
      */
     public function create()
     {
-        return Inertia::render('rooms/create');
+        $operators = $this->user->where('role', 'operator')->select('id', 'name')->get();
+        return Inertia::render('rooms/create', ['operators' => $operators]);
     }
 
     /**
@@ -66,7 +70,8 @@ class RoomsController extends Controller
             "status" => $request->status,
             "extensions" => $request->extensions,
             "type_field" => $request->type_field,
-            'ftp' => $request->ftp
+            'ftp' => $request->ftp,
+            'operator_id' => $request->operator
         ];
 
 
@@ -113,7 +118,8 @@ class RoomsController extends Controller
     public function edit(string $id)
     {
         $room = $this->room->find($id);
-        return Inertia::render('rooms/edit', ['room' => $room]);
+        $operators = $this->user->where('role', 'operator')->select('id', 'name')->get();
+        return Inertia::render('rooms/edit', ['room' => $room, 'operators' => $operators]);
     }
 
     /**
@@ -133,7 +139,8 @@ class RoomsController extends Controller
             "status" => $request->status,
             "extensions" => $request->extensions,
             "type_field" => $request->type_field,
-            'ftp' => $request->ftp
+            'ftp' => $request->ftp,
+            'operator_id' => $request->operator
         ];
         $update = $this->room->where('id', $id)->update($data);
         if ($request->ftp) {
@@ -186,6 +193,7 @@ class RoomsController extends Controller
     public function destroy(string $id)
     {
         $find = $this->room->with('attchs')->find($id);
+        $this->room->where('id', $id)->delete();
         if ($find->ftp) {
             try {
                 if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $find->ftp, $match)) {
@@ -212,7 +220,6 @@ class RoomsController extends Controller
         }
         Storage::deleteDirectory($find->folder);
         Storage::deleteDirectory('attch/' . $find->name);
-        $this->room->where('id', $id)->delete();
     }
 
 

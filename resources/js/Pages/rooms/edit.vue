@@ -66,6 +66,16 @@
             </div>
             <div class="form-control w-full">
                 <label class="label">
+                    <span class="label-text">Operator</span>
+                </label>
+                <select class="select select-bordered w-full" v-model="form.operator">
+                    <option disabled selected>Pilih operator</option>
+                    <option v-for="operator in operators" :value="operator.id" :key="operator.id">{{ operator.name }}
+                    </option>
+                </select>
+            </div>
+            <div class="form-control w-full">
+                <label class="label">
                     <span class="label-text">Field Type Soal</span>
                 </label>
                 <input type="checkbox" v-model="form.type_field" class="toggle toggle-primary" />
@@ -98,7 +108,8 @@ export default {
     },
     props: {
         errors: Object,
-        room: Object
+        room: Object,
+        operators: Array
     },
     setup() {
         const toast = useToast()
@@ -115,7 +126,8 @@ export default {
                 extensions: null,
                 folder: null,
                 type_field: false,
-                ftp: null
+                ftp: null,
+                operator: null
             }),
         };
     },
@@ -129,6 +141,7 @@ export default {
         this.form.mata_kuliah = this.room.mata_kuliah
         this.form.type_field = this.room.type_field == 1 ? true : false
         this.form.ftp = this.room.ftp
+        this.form.operator = this.room.operator_id
     },
     methods: {
         async handleSubmit() {

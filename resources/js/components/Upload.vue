@@ -17,9 +17,9 @@
                 </p>
             </div>
         </div>
-        <!-- <p class="text-gray-500 font-semibold leading-tight">
+        <p class="text-gray-500 font-semibold leading-tight">
             {{ message }}
-        </p> -->
+        </p>
     </div>
 </template>
 <script>
@@ -28,6 +28,9 @@ import { CloudArrowUpIcon, FolderOpenIcon } from '@heroicons/vue/24/solid';
 
 export default {
     components: { CloudArrowUpIcon, FolderOpenIcon },
+    props: {
+        message: String
+    },
     setup(props, ctx) {
         function onDrop(acceptFiles, rejectReasons) {
             ctx.emit("setFile", acceptFiles)

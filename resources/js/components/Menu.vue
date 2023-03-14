@@ -7,7 +7,7 @@
             </h1>
         </div>
         <li>
-            <BaseLink path="dashboard" :active="true" #title>
+            <BaseLink path="dashboard" :active="currentRoute === 'dashboard'" #title>
                 <div class="flex space-x-3 items-center">
                     <HomeIcon class="h-6 w-6 text-white" />
                     <span>Home</span>
@@ -15,7 +15,7 @@
             </BaseLink>
         </li>
         <li>
-            <BaseLink path="rooms.index" :active="false" #title>
+            <BaseLink path="rooms.index" :active="currentRoute === 'rooms.index'" #title>
                 <div class="flex space-x-3 items-center">
                     <InboxStackIcon class="h-6 w-6 text-white" />
                     <span>Rooms</span>
@@ -56,11 +56,17 @@ export default {
     props: {
         auth: Object
     },
+    
     data() {
         return {
             current: this.currentRoute
         }
     },
+    watch:{
+        current(){
+            console.log("ok")            
+        }
+    },  
     setup() {
         const { currentRoute } = usePage().props
         return { currentRoute }

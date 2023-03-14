@@ -32,12 +32,13 @@ class RoomsRequest extends FormRequest
             'folder' => [
                 'required',
                 new FolderRule(),
-                
+
             ],
             'kelas' => 'required',
             'mata_kuliah' => 'required',
             'extensions' => 'required',
-            'ftp' => 'regex:/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i|nullable'
+            'ftp' => 'regex:/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i|nullable',
+            'operator' => 'required'
         ];
     }
 

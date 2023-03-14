@@ -69,7 +69,8 @@
 
                         </div>
                         <div class="my-2 w-full">
-                            <Upload v-if="!form.files.length" @set-file="handleSetFile" />
+                            <Upload v-if="!form.files.length" @set-file="handleSetFile"
+                                :message="`Extensions hanya : ${room.extensions}`" />
                             <ul class="space-y-2" v-if="form.files.length" v-for="(acc, index) in form.files" :key="index">
                                 <list-file :progress="form.progress" :name="acc.name" :size="acc.size"
                                     @removeFile="handleRemoveFile(index)"></list-file>
@@ -190,9 +191,11 @@ export default {
         handleUpload() {
             const app = this;
             this.form.post(this.$route('uploader.upload', this.room.name), {
-                preserveScroll: true, preserveState: true, onSuccess() {
-                    app.toast.success("Berhasil Upload")
-                    app.form.reset()
+                preserveScroll: true, preserveState: true, onSuccess(data) {
+                    if (data.component === "uploader/show") {
+                        app.toast.success("Berhasil Upload")
+                        app.form.reset()
+                    }
                 }
             })
         },

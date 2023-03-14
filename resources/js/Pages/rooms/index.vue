@@ -170,7 +170,8 @@ export default {
                                 'Berhasil menghapus semua rooms.',
                                 'success'
                             )
-                        }
+                        },
+
                     })
                 }
             })
@@ -199,6 +200,7 @@ export default {
         },
 
         handleDelete(id) {
+            const app = this;
             Swal.fire({
                 title: 'Yakin ?',
                 text: "Kamu Akan menghapus Folder serta data lainnya di room ini !",
@@ -211,13 +213,18 @@ export default {
             }).then((result) => {
                 if (result.isConfirmed) {
                     this.$inertia.delete(this.$route('rooms.destroy', id), {}, {
-                        preserveState: true, preserveScroll: true, onSuccess: () => {
+                        preserveState: true, preserveScroll: true,
+                        onSuccess: () => {
                             Swal.fire(
                                 'Berhasil!',
                                 'Berhasil menghapus rooms.',
                                 'success'
                             )
-                        }
+                        },
+                        onError: (err) => {
+                            console.log(err)
+                            app.toast(err)
+                        },
                     })
                 }
             })
