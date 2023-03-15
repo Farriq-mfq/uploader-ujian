@@ -15,9 +15,9 @@
         <div v-else class="kbd">
             Storage Local FTP
         </div>
-        <div class="font-mono text-slate-900 text-2xl font-bold absolute top-4 right-4 tooltip" data-tip="Total Uploader">
+        <!-- <div class="font-mono text-slate-900 text-2xl font-bold absolute top-4 right-4 tooltip" data-tip="Total Uploader">
             {{ room.uploads.length }}
-        </div>
+        </div> -->
     </div>
 </template>
 <script>

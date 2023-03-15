@@ -14,7 +14,7 @@ class RoleAuth
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, $type, $role = null): Response
+    public function handle(Request $request, Closure $next, $type, ...$roles): Response
     {
         if ($type === "guest") {
             if (Auth::check()) {
@@ -24,8 +24,8 @@ class RoleAuth
             }
         } else if ($type === "auth") {
             if (Auth::check()) {
-                if ($role != null) {
-                    if (Auth::user()->role === $role) {
+                if (count($roles)) {
+                    if (in_array($request->user()->role, $roles)) {
                         return $next($request);
                     } else {
                         return redirect(route('error.not_found'));

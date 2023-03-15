@@ -55,7 +55,8 @@ class RoomsRequest extends FormRequest
             'name.unique' => "nama sudah di gunakan",
             'kelas.required' => "Kelas harus di isi",
             'mata_kuliah.required' => "Mata Kuliah harus di isi",
-            'ftp.regex' => "Format ftp tidak sesuai"
+            'ftp.regex' => "Format ftp tidak sesuai",
+            'operator.required' => "operator harus di isi"
         ];
     }
 }

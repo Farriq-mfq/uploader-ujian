@@ -1,5 +1,9 @@
 <template>
     <div>
+
+        <Head>
+            <title>Operators</title>
+        </Head>
         <div class="mb-3">
             <Link :href="$route('operator.create')" as="button" class="btn btn-primary">Tambahkan Operator</Link>
         </div>
@@ -39,7 +43,7 @@
 </template>
 <script>
 import BaseLayout from '../../Layouts/BaseLayout.vue'
-import { Link } from '@inertiajs/vue3';
+import { Link, Head } from '@inertiajs/vue3';
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid';
 import Swal from 'sweetalert2'
 export default {
@@ -47,7 +51,8 @@ export default {
     components: {
         Link,
         TrashIcon,
-        PencilIcon
+        PencilIcon,
+        Head
     },
     props: {
         operators: Array

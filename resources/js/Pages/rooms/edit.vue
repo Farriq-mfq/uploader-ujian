@@ -1,5 +1,9 @@
 <template>
     <div class="card shadow-lg p-3 border">
+
+        <Head>
+            <title>Edit Rooms</title>
+        </Head>
         <h1 class="text-xl font-bold">Edit rooms</h1>
         <div class="divider"></div>
         <form @submit.prevent="handleSubmit">
@@ -97,7 +101,7 @@
 import BaseLayout from '../../Layouts/BaseLayout.vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import { MinusIcon, PlusIcon } from '@heroicons/vue/24/solid'
-import { useForm } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import { useToast } from "vue-toastification";
 export default {
     layout: BaseLayout,
@@ -105,6 +109,7 @@ export default {
         VueDatePicker,
         PlusIcon,
         MinusIcon,
+        Head
     },
     props: {
         errors: Object,

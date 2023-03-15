@@ -1,5 +1,9 @@
 <template>
     <div class="card bg-white shadow-sm border-2 p-4">
+
+        <Head>
+            <title>Edit Operator</title>
+        </Head>
         <div class="mb-4 space-x-2">
             <Link class="btn btn-primary" as="button" :href="$route('operator.index')" replace>
             Kembali
@@ -39,7 +43,7 @@
     </div>
 </template>
 <script>
-import { Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm, Head } from '@inertiajs/vue3';
 import BaseLayout from '../../Layouts/BaseLayout.vue'
 import { useToast } from 'vue-toastification'
 export default {
@@ -77,7 +81,7 @@ export default {
         this.form.name = name;
         this.form.username = username;
     },
-    components: { Link }
+    components: { Link, Head }
 }
 </script>
 <style lang="">

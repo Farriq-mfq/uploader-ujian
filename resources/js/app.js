@@ -4,9 +4,9 @@ import { createInertiaApp } from "@inertiajs/vue3";
 import "@vuepic/vue-datepicker/dist/main.css";
 import "vue-toastification/dist/index.css";
 import Toast from "vue-toastification";
-import VueCountdown from '@chenfengyuan/vue-countdown';
+import VueCountdown from "@chenfengyuan/vue-countdown";
 createInertiaApp({
-    // title: (title) => `${title} - UPT KOM`,
+    title: (title) => `${title} - SIUP`,
     resolve: (name) => {
         const pages = import.meta.glob("./Pages/**/*.vue", { eager: true });
         return pages[`./Pages/${name}.vue`];

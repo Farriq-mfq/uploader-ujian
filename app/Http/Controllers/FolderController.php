@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Room;
 use App\Models\Upload;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -23,7 +24,11 @@ class FolderController extends Controller
     }
     public function index()
     {
-        $rooms = $this->room->with('uploads')->get();
+        if (Auth::user()->role === "operator") {
+            $rooms = $this->room->where('operator_id', Auth::user()->id)->get();
+        } else if (Auth::user()->role === "master") {
+            $rooms = $this->room->get();
+        }
         return Inertia::render('folder/index', ['rooms' => $rooms]);
     }
     public function download_file($id)
@@ -42,7 +47,7 @@ class FolderController extends Controller
                         }
                     }
                     return Response::download(storage_path('app/' . $folder_name), $folder_name, ['Content-Type: application/zip']);
-                }else{
+                } else {
                     return redirect()->back();
                 }
             } else {
@@ -58,7 +63,16 @@ class FolderController extends Controller
         } else {
             $uploads = $this->upload->where('room_id', $room)->with('room')->paginate(5);
         }
-        $roomName = $this->room->select('name', 'id')->find($room);
+        if (Auth::user()->role === "operator") {
+            $roomName = $this->room->select('name', 'id')->where('operator_id', Auth::user()->id)->find($room);
+            if ($roomName === null) {
+                return redirect(route('folder.index'));
+            }
+        } else if (Auth::user()->role === "master") {
+            $roomName = $this->room->select('name', 'id')->find($room);
+        }
+
+
         if ($room) {
             return Inertia::render('folder/detail', ['uploads' => $uploads, 'roomName' => $roomName]);
         }

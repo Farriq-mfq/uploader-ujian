@@ -1,5 +1,8 @@
 <template >
     <div class="grid place-items-center min-h-[80vh]">
+        <Head>
+            <title>List Rooms</title>
+        </Head>
         <div class="grid gap-2 max-w-sm w-full">
             <h4 class="text-lg font-bold">ROOM YANG TERSEDIA</h4>
             <span class="text-sm text-gray-700 font-semibold">Private Rooms</span>
@@ -18,7 +21,7 @@
     </div>
 </template>
 <script>
-import { Link } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import UploaderLayout from '../../Layouts/UploaderLayout.vue';
 
 export default {
@@ -27,7 +30,7 @@ export default {
         allows: Array,
         globals: Array
     },
-    components: { Link }
+    components: { Link, Head }
 }
 </script>
 <style lang="">

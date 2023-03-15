@@ -1,5 +1,9 @@
 <template>
     <div class="grid grid-cols-1 gap-5 lg:grid-cols-4">
+
+        <Head>
+            <title>Dashboard</title>
+        </Head>
         <div class="stats shadow">
 
             <div class="stat">
@@ -39,14 +43,16 @@
     </div>
 </template>
 <script>
+import { Head } from '@inertiajs/vue3';
 import BaseLayout from '../Layouts/BaseLayout.vue';
+
 export default {
     layout: BaseLayout,
     props: {
         auth: Object
     },
-    mounted() {
-        console.log(this.auth)
+    components: {
+        Head
     }
 
 

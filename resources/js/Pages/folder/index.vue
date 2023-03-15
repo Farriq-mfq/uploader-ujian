@@ -1,5 +1,9 @@
 <template>
     <div>
+        
+        <Head>
+            <title>Folder</title>
+        </Head>
         <div v-if="!rooms.length">
             Folder Belum ada
         </div>
@@ -12,9 +16,10 @@
 import BaseLayout from '../../Layouts/BaseLayout.vue';
 import Folder from '../../components/Folder.vue';
 import { useToast } from 'vue-toastification'
+import { Head } from '@inertiajs/vue3';
 export default {
     layout: BaseLayout,
-    components: { Folder },
+    components: { Folder, Head },
     props: {
         rooms: Array,
         errors: Object

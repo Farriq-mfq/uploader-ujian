@@ -19,6 +19,13 @@ class AuthController extends Controller
         $credentials = $request->only('username', 'password');
         if (Auth::attempt($credentials)) {
             return redirect(route('dashboard'));
+        } else {
+            return redirect(route('login'))->withErrors(['login' => "Invalid username atau password"]);
         }
+    }
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        return redirect(route('login'));
     }
 }

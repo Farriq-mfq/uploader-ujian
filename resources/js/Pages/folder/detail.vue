@@ -1,5 +1,8 @@
 <template>
     <div>
+        <Head>
+            <title>Folder {{ roomName.name }}</title>
+        </Head>
         <div class="mb-4 space-x-2">
             <Link class="btn btn-primary" as="button" :href="$route('folder.index')" replace>
             Kembali
@@ -50,7 +53,7 @@
 </template>
 <script>
 import { TrashIcon } from '@heroicons/vue/24/solid';
-import { Link } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import Pagination from '../../components/Pagination.vue';
 import BaseLayout from '../../Layouts/BaseLayout.vue';
 import Swal from 'sweetalert2';
@@ -74,7 +77,7 @@ export default {
             }
         }
     },
-    components: { Link, Pagination, TrashIcon },
+    components: { Link, Pagination, TrashIcon, Head },
     methods: {
         handleDelete(id) {
             Swal.fire({

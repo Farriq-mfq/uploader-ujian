@@ -1,6 +1,9 @@
 <template>
     <div>
 
+        <Head>
+            <title>Rooms</title>
+        </Head>
         <div class="mb-3">
             <Link :href="$route('rooms.create')" class="btn btn-primary">Buat rooms</Link>
         </div>
@@ -115,7 +118,7 @@
     </div>
 </template>
 <script>
-import { Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import BaseLayout from '../../Layouts/BaseLayout.vue';
 import Swal from 'sweetalert2'
 import Pagintion from "../../components/Pagination.vue"
@@ -124,7 +127,7 @@ import ListFile from '../../components/ListFile.vue'
 import { useToast } from 'vue-toastification'
 export default {
     layout: BaseLayout,
-    components: { Link, Pagintion, PencilIcon, TrashIcon, LinkIcon, ComputerDesktopIcon, ClipboardDocumentIcon, ListFile },
+    components: { Link, Pagintion, PencilIcon, TrashIcon, LinkIcon, ComputerDesktopIcon, ClipboardDocumentIcon, ListFile, Head },
     props: {
         rooms: Array
     },

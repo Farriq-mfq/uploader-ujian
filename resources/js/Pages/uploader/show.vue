@@ -1,5 +1,6 @@
 <template >
     <div v-if="room && startTime" class="w-full min-h-[80vh] grid place-items-center">
+
         <div class="max-w-xl bg-white w-full shadow-sm rounded-lg p-3 border flex items-center space-x-2 justify-center">
             <div class="font-mono text-md text-gray-600 uppercase font-bold">
                 Ujian di mulai
@@ -20,7 +21,11 @@
     </div>
     <PlayRandomImg :show="room && expired" message="WAKTU HABIS" />
 
-    <div class="mockup-window relative bg-blue-500 bg-opacity-5 shadow z-50" v-if="room && !expired && !startTime">
+    <Head>
+        <title>{{ room.name }}</title>
+    </Head>
+    <div class="mockup-window relative bg-blue-500 bg-opacity-5 z-50 border-2 shadow-sm drop-shadow-sm"
+        v-if="room && !expired && !startTime">
         <div
             class="shadow-sm  text-4xl font-semibold text-gray-700 justify-self-center bg-blue-500/10 border-2 w-fit absolute lg:top-14 top-0 lg:right-5 right-0 grid place-items-center gap-2 rounded-lg">
             <div class="text-sm text-white bg-blue-500 font-bold leading-tight w-full h-10 grid place-items-center px-4">
@@ -96,7 +101,7 @@
             </div>
             <div class="divider uppercase">daftar file yang di upload</div>
             <div class="overflow-x-auto px-10">
-                <table class="table w-full rounded-none">
+                <table class="table w-full rounded-none" v-if="room.uploads.length">
                     <thead>
                         <tr>
                             <th>NIM</th>
@@ -117,13 +122,17 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="grid place-items-center text-center" v-if="!room.uploads.length">
+                    <InboxIcon class="h-24 text-gray-500" />
+                    <p class="text-center my-4 text-gray-500 text-sm">Belum ada yang upload</p>
+                </div>
             </div>
         </div>
     </div>
 </template>
 <script>
-import { FaceFrownIcon } from '@heroicons/vue/24/solid';
-import { useForm } from '@inertiajs/vue3';
+import { InboxIcon } from '@heroicons/vue/24/solid';
+import { Head, useForm } from '@inertiajs/vue3';
 import Attch from '../../components/Attch.vue';
 import ListFile from '../../components/ListFile.vue';
 import PlayRandomImg from '../../components/PlayRandomImg.vue';
@@ -136,9 +145,10 @@ export default {
     components: {
         Upload,
         ListFile,
-        FaceFrownIcon,
+        InboxIcon,
         PlayRandomImg,
-        Attch
+        Attch,
+        Head
     },
     props: {
         room: Object | null,

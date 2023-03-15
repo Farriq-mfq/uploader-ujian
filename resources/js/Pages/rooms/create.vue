@@ -1,5 +1,9 @@
 <template>
     <div>
+
+        <Head>
+            <title>Buat Rooms</title>
+        </Head>
         <div class="bg-white p-3 shadow-xl rounded-lg space-x-2 grid" v-if="copyUrl.trim().length">
             <h2 class="font-semibold mb-2 ml-3 text-lg">Copy URL (AKAN DI TUTUP <b> {{ timer }}</b> detik lagi)</h2>
             <div class="flex space-x-2">
@@ -84,8 +88,10 @@
                     </label>
                     <select class="select select-bordered w-full" v-model="form.operator">
                         <option disabled selected>Pilih operator</option>
-                        <option v-for="operator in operators" :value="operator.id" :key="operator.id">{{ operator.name }}</option>
+                        <option v-for="operator in operators" :value="operator.id" :key="operator.id">{{ operator.name }}
+                        </option>
                     </select>
+                    <p class="text-red-500 text-sm" v-if="form.errors.operator">{{ form.errors.operator }}</p>
                 </div>
                 <div class="form-control w-full">
                     <label class="label">
@@ -110,14 +116,16 @@
 <script>
 import BaseLayout from '../../Layouts/BaseLayout.vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
-import { useForm } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import { useToast } from "vue-toastification";
 import ModalIp from '../../components/ModalIp.vue';
 
 export default {
     layout: BaseLayout,
     components: {
-        VueDatePicker, ModalIp
+        VueDatePicker,
+        ModalIp,
+        Head
     },
     props: {
         errors: Object,

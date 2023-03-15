@@ -1,5 +1,9 @@
 <template >
     <div class="bg-white shadow-lg rounded-lg border p-4">
+        
+        <Head>
+            <title>Manage IP</title>
+        </Head>
         <div class="mb-4 space-x-2">
             <Link class="btn btn-primary" as="button" :href="$route('rooms.index')" replace>
             Kembali
@@ -36,15 +40,16 @@
 <script>
 import BaseLayout from '../../Layouts/BaseLayout.vue'
 import { XMarkIcon } from '@heroicons/vue/24/solid'
-import { Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import { useToast } from "vue-toastification";
 
 export default {
     layout: BaseLayout,
     components: {
-        XMarkIcon,
-        Link
-    },
+    XMarkIcon,
+    Link,
+    Head
+},
     props: {
         allows: Array,
         room: Number,

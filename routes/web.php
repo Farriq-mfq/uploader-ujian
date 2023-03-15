@@ -23,8 +23,8 @@ use Inertia\Inertia;
 */
 
 Route::prefix('private')->group(function () {
-    Route::get('/', [HomeController::class, 'index'])->name('dashboard');
-    Route::prefix('rooms')->middleware('role_login:auth,master')->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('dashboard')->middleware('role_login:auth,master,operator');
+    Route::prefix('rooms')->middleware('role_login:auth,master,operator')->group(function () {
         Route::post('/batch_remove', [RoomsController::class, 'batch_remove'])->name('rooms.batch_remove');
         Route::post('/batch_active', [RoomsController::class, 'batch_active'])->name('rooms.batch_active');
         Route::post('/batch_inactive', [RoomsController::class, 'batch_inactive'])->name('rooms.batch_inactive');
@@ -34,11 +34,11 @@ Route::prefix('private')->group(function () {
         Route::post("/{room}/ip", [RoomsController::class, 'add_ip'])->name('rooms.add_ip');
         Route::delete("/{room}/ip/{ip}", [RoomsController::class, 'delete_ip'])->name('rooms.delete_ip');
     });
-    Route::delete('/attch/{attch}', [AttchController::class, 'removeAttch'])->name('attch.delete')->middleware('role_login:auth,master');
-    Route::resource('rooms', RoomsController::class)->middleware('role_login:auth,master');
+    Route::delete('/attch/{attch}', [AttchController::class, 'removeAttch'])->name('attch.delete')->middleware('role_login:auth,master,operator');
+    Route::resource('rooms', RoomsController::class)->middleware('role_login:auth,master,operator');
 
 
-    Route::prefix('folder')->middleware('role_login:auth,master')->group(function () {
+    Route::prefix('folder')->middleware('role_login:auth,master,operator')->group(function () {
         Route::get("/", [FolderController::class, 'index'])->name('folder.index');
         Route::get("/{room}/download", [FolderController::class, 'download_file'])->name('folder.download');
         Route::get("/{room}/detail", [FolderController::class, 'detail'])->name('folder.detail');
@@ -50,6 +50,7 @@ Route::prefix('private')->group(function () {
     // authentication
     Route::get('/login', [AuthController::class, 'index'])->name('login')->middleware('role_login:guest');
     Route::post('/login', [AuthController::class, 'login'])->name('login.action')->middleware('role_login:guest');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('role_login:auth');
 });
 
 // client
