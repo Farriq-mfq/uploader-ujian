@@ -24,12 +24,12 @@
     <Head>
         <title>{{ room.name }}</title>
     </Head>
-    <div class="mockup-window relative bg-blue-500 bg-opacity-5 z-50 border-2 shadow-sm drop-shadow-sm"
+    <div class="mockup-window relative bg-blue-500/5 z-50 border-2 shadow-sm drop-shadow-sm"
         v-if="room && !expired && !startTime">
         <div
-            class="shadow-sm  text-4xl font-semibold text-gray-700 justify-self-center bg-blue-500/10 border-2 w-fit absolute lg:top-14 top-0 lg:right-5 right-0 grid place-items-center gap-2 rounded-lg">
+            class="shadow-sm text-4xl font-semibold text-gray-700 justify-self-center bg-blue-500/10 border-2 w-fit absolute lg:top-14 top-0 lg:right-5 right-0 grid place-items-center gap-2 rounded-lg">
             <div class="text-sm text-white bg-blue-500 font-bold leading-tight w-full h-10 grid place-items-center px-4">
-                <h5>Sisa Waktu Upload</h5>
+                <h5 class="uppercase">Sisa Waktu Upload</h5>
             </div>
             <vue-countdown class="p-5" :time="UploadTime" @end="handleEnd" :interval="1000"
                 v-slot="{ days, hours, minutes, seconds }">
@@ -99,7 +99,7 @@
                     </form>
                 </div>
             </div>
-            <div class="divider uppercase">daftar file yang di upload</div>
+            <div class="divider uppercase text-sm text-gray-500">daftar file yang di upload</div>
             <div class="overflow-x-auto px-10">
                 <table class="table w-full rounded-none" v-if="room.uploads.length">
                     <thead>

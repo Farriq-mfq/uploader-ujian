@@ -1,5 +1,5 @@
 <template >
-    <div class="bg-white shadow-lg p-3 rounded-lg border-2">
+    <div class="bg-white shadow-lg p-4 rounded-lg border-2">
         <Head>
             <title>Login</title>
         </Head>
@@ -20,7 +20,7 @@
             </div>
             <div class="my-5">
                 <button :disabled="form.processing" class="btn btn-block btn-primary">{{ form.processing ?
-                    "Masuk...." : "Masuk" }}</button>
+                    "Loading...." : "Masuk" }}</button>
             </div>
         </form>
         <div class="text-center text-sm text-gray-500">

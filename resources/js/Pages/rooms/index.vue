@@ -4,15 +4,17 @@
         <Head>
             <title>Rooms</title>
         </Head>
-        <div class="mb-3">
-            <Link :href="$route('rooms.create')" class="btn btn-primary">Buat rooms</Link>
+        <div class="mb-3" v-if="auth.role == 'master'">
+            <Link :href="$route('rooms.create')" class="btn btn-primary">Buat
+            rooms</Link>
         </div>
         <div class="mb-3">
             <input v-model="keyword" type="search" placeholder="Cari nama rooms"
                 class="input input-bordered w-full max-w-xs" />
         </div>
         <div class="mb-3 btn-group-horizontal space-x-2" v-if="rooms.data.length">
-            <button @click="handleBatchRemove" type="button" class="btn btn-error">Hapus Semua</button>
+            <button @click="handleBatchRemove" type="button" class="btn btn-error" v-if="auth.role == 'master'">Hapus
+                Semua</button>
             <button class="btn btn-accent" type="button" @click="handleActiveAll">Active Semua</button>
             <button class="btn btn-secondary" type="button" @click="handleInActiveAll">Inactive Semua</button>
             <button v-if="formAttch" class="btn btn-error" @click.prevent="handleCencelAttch">Batalkan Upload</button>
@@ -89,7 +91,7 @@
                             data-tip="Edit Room">
                         <PencilIcon class="h-5 text-white" />
                         </Link>
-                        <button class="btn btn-error btn-sm tooltip" data-tip="Hapus Room" type="button"
+                        <button v-if="auth.role == 'master'" class="btn btn-error btn-sm tooltip" data-tip="Hapus Room" type="button"
                             @click="handleDelete(room.id)">
                             <TrashIcon class="h-5 text-white" />
                         </button>
@@ -118,7 +120,7 @@
     </div>
 </template>
 <script>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import BaseLayout from '../../Layouts/BaseLayout.vue';
 import Swal from 'sweetalert2'
 import Pagintion from "../../components/Pagination.vue"
@@ -150,7 +152,8 @@ export default {
     },
     setup() {
         const toast = useToast()
-        return { toast }
+        const auth = usePage().props.auth;
+        return { toast, auth }
     },
 
     methods: {

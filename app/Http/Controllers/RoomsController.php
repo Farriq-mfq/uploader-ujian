@@ -8,6 +8,7 @@ use App\Models\AttchRoom;
 use App\Models\Room;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
@@ -27,6 +28,8 @@ class RoomsController extends Controller
         $this->room = new Room();
         $this->ips = new AllowIp();
         $this->user = new User();
+
+        $this->middleware('role_login:auth,master', ['only' => ['create', 'store', 'destroy', 'batch_remove']]);
     }
 
     /**
@@ -36,10 +39,19 @@ class RoomsController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->keyword) {
-            $rooms = $this->room->with(['attchs', 'allowsIP'])->where("name", "LIKE", "%" . $request->keyword . "%")->latest()->paginate(5);
-        } else {
-            $rooms = $this->room->with(['attchs', 'allowsIP'])->latest()->paginate(5);
+
+        if (Auth::user()->role === "operator") {
+            if ($request->keyword) {
+                $rooms = $this->room->with(['attchs', 'allowsIP'])->where('operator_id', Auth::user()->id)->where("name", "LIKE", "%" . $request->keyword . "%")->latest()->paginate(5);
+            } else {
+                $rooms = $this->room->with(['attchs', 'allowsIP'])->where('operator_id', Auth::user()->id)->latest()->paginate(5);
+            }
+        } else if (Auth::user()->role === "master") {
+            if ($request->keyword) {
+                $rooms = $this->room->with(['attchs', 'allowsIP'])->where("name", "LIKE", "%" . $request->keyword . "%")->latest()->paginate(5);
+            } else {
+                $rooms = $this->room->with(['attchs', 'allowsIP'])->latest()->paginate(5);
+            }
         }
         return Inertia::render('rooms/index', ['rooms' => $rooms]);
     }
@@ -192,48 +204,12 @@ class RoomsController extends Controller
      */
     public function destroy(string $id)
     {
-        $find = $this->room->with('attchs')->find($id);
-        $this->room->where('id', $id)->delete();
-        if ($find->ftp) {
-            try {
-                if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $find->ftp, $match)) {
-                    if (!extension_loaded('ftp')) {
-                        throw new \RuntimeException("FTP extension not loaded.");
-                    }
-
-                    $connection = new FtpConnection($match[3], $match[1], $match[2]);
-                    $connection->open();
-
-                    $config = new FtpConfig($connection);
-                    $config->setPassive(true);
-
-                    $client = new FtpClient($connection);
-                    $client->removeDir($find->folder);
-                    $connection->close();
-                }
-            } catch (\Throwable $ex) {
-                return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
-            }
-        }
-        foreach ($find->attchs as $file) {
-            Storage::delete("attch/" . $find->name . "/" . $file->file);
-        }
-        Storage::deleteDirectory($find->folder);
-        Storage::deleteDirectory('attch/' . $find->name);
-    }
-
-
-    /**
-     * remove all rooms
-     */
-    public function batch_remove()
-    {
-        $rooms = $this->room->where('id', ">", 0)->get();
-        foreach ($rooms as $room) {
-            Storage::deleteDirectory($room->folder);
-            if ($room->ftp) {
+        if (Auth::user()->role === 'master') {
+            $find = $this->room->with('attchs')->find($id);
+            $this->room->where('id', $id)->delete();
+            if ($find->ftp) {
                 try {
-                    if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $room->ftp, $match)) {
+                    if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $find->ftp, $match)) {
                         if (!extension_loaded('ftp')) {
                             throw new \RuntimeException("FTP extension not loaded.");
                         }
@@ -245,18 +221,62 @@ class RoomsController extends Controller
                         $config->setPassive(true);
 
                         $client = new FtpClient($connection);
-                        $client->removeDir($room->folder);
+                        $client->removeDir($find->folder);
                         $connection->close();
                     }
                 } catch (\Throwable $ex) {
                     return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
                 }
             }
+            foreach ($find->attchs as $file) {
+                Storage::delete("attch/" . $find->name . "/" . $file->file);
+            }
+            Storage::deleteDirectory($find->folder);
+            Storage::deleteDirectory('attch/' . $find->name);
+        } else {
+            return redirect(route('rooms.index'));
         }
-        $delete = $this->room->where('id', ">", 0)->delete();
-        if ($delete) {
-            $files =  Storage::allFiles('attch');
-            Storage::delete($files); // delete attch
+    }
+
+
+    /**
+     * remove all rooms
+     */
+    public function batch_remove()
+    {
+        if (Auth::user()->role === 'master') {
+            $rooms = $this->room->where('id', ">", 0)->get();
+            foreach ($rooms as $room) {
+                Storage::deleteDirectory($room->folder);
+                if ($room->ftp) {
+                    try {
+                        if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $room->ftp, $match)) {
+                            if (!extension_loaded('ftp')) {
+                                throw new \RuntimeException("FTP extension not loaded.");
+                            }
+
+                            $connection = new FtpConnection($match[3], $match[1], $match[2]);
+                            $connection->open();
+
+                            $config = new FtpConfig($connection);
+                            $config->setPassive(true);
+
+                            $client = new FtpClient($connection);
+                            $client->removeDir($room->folder);
+                            $connection->close();
+                        }
+                    } catch (\Throwable $ex) {
+                        return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
+                    }
+                }
+            }
+            $delete = $this->room->where('id', ">", 0)->delete();
+            if ($delete) {
+                $files =  Storage::allFiles('attch');
+                Storage::delete($files); // delete attch
+            }
+        } else {
+            return redirect(route('rooms.index'));
         }
     }
 
@@ -266,7 +286,11 @@ class RoomsController extends Controller
 
     public function batch_active()
     {
-        $this->room->where('id', ">", 0)->update(['status' => true]);
+        if (Auth::user()->role === 'operator') {
+            $this->room->where('id', ">", 0)->where('operator_id', Auth::user()->id)->update(['status' => true]);
+        } elseif (Auth::user()->role === 'master') {
+            $this->room->where('id', ">", 0)->update(['status' => true]);
+        }
     }
     /**
      * update inactive record
@@ -274,7 +298,11 @@ class RoomsController extends Controller
 
     public function batch_inactive()
     {
-        $this->room->where('id', ">", 0)->update(['status' => false]);
+        if (Auth::user()->role === 'operator') {
+            $this->room->where('id', ">", 0)->where('operator_id', Auth::user()->id)->update(['status' => false]);
+        } elseif (Auth::user()->role === 'master') {
+            $this->room->where('id', ">", 0)->update(['status' => false]);
+        }
     }
 
     /**
@@ -308,10 +336,15 @@ class RoomsController extends Controller
     }
     public function show_ip($room)
     {
-        $allows = $this->ips->whereHas('room', function ($q) use ($room) {
-            return $q->where("id", $room);
-        })->orderBy('ip', "ASC")->get();
-        return Inertia::render('rooms/ip', ['allows' => $allows, 'room' => $room]);
+        $check = $this->room->find($room);
+        if ($check != null) {
+            $allows = $this->ips->whereHas('room', function ($q) use ($room) {
+                return $q->where("id", $room);
+            })->orderBy('ip', "ASC")->get();
+            return Inertia::render('rooms/ip', ['allows' => $allows, 'room' => $room]);
+        } else {
+            return redirect(route('rooms.index'));
+        }
     }
     public function add_ip(Request $request, $room)
     {

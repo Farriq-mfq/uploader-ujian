@@ -4,20 +4,20 @@
             :class="`w-full h-64 flex border-2 border-dashed border-gray-300 justify-center items-center rounded-lg ${isDragActive ? `bg-blue-100` : ``}`">
             <input v-bind="getInputProps()" />
             <div v-if="isDragActive" class="grid place-items-center first-letter gap-2">
-                <FolderOpenIcon class="text-blue-500 h-24" />
-                <p class="text-center text-gray-500 font-semibold divider">Letakan disini ...</p>
+                <FolderOpenIcon class="text-blue-500 h-24 animate-pulse" />
+                <p class="text-center text-gray-500 font-semibold text-sm">Letakan disini ...</p>
             </div>
             <div v-else class="grid place-items-center first-letter gap-2">
                 <CloudArrowUpIcon class="text-blue-500 h-24" />
                 <p class=" text-center text-gray-500 font-semibold leading-tight">Drag 'n' drop disini, atau <br><span
                         class="divider">Atau</span>
                 <div
-                    class="bg-blue-500 hover:bg-blue-500/90 p-2 rounded-lg text-white cursor-pointer btn border-none font-bold leading-tight hover:bg-blue-500/90 btn-block text-sm">
+                    class="bg-blue-500 p-2 rounded-lg text-white cursor-pointer btn border-none font-bold leading-tight hover:bg-blue-500/90 btn-block text-sm">
                     Pilih file</div>
                 </p>
             </div>
         </div>
-        <p class="text-gray-500 font-semibold leading-tight">
+        <p class="text-gray-500 font-semibold leading-tight text-sm">
             {{ message }}
         </p>
     </div>

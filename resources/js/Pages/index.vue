@@ -7,54 +7,40 @@
         <div class="stats shadow">
 
             <div class="stat">
-                <div class="stat-title">Total Page Views</div>
-                <div class="stat-value">89,400</div>
-                <div class="stat-desc">21% more than last month</div>
+                <div class="stat-title">Total Rooms</div>
+                <div class="stat-value">{{ rooms }}</div>
             </div>
 
         </div>
-        <div class="stats shadow">
+        <div class="stats shadow" v-if="auth.role === 'master'">
 
             <div class="stat">
-                <div class="stat-title">Total Page Views</div>
-                <div class="stat-value">89,400</div>
-                <div class="stat-desc">21% more than last month</div>
-            </div>
-
-        </div>
-        <div class="stats shadow">
-
-            <div class="stat">
-                <div class="stat-title">Total Page Views</div>
-                <div class="stat-value">89,400</div>
-                <div class="stat-desc">21% more than last month</div>
-            </div>
-
-        </div>
-        <div class="stats shadow">
-
-            <div class="stat">
-                <div class="stat-title">Total Page Views</div>
-                <div class="stat-value">89,400</div>
-                <div class="stat-desc">21% more than last month</div>
+                <div class="stat-title">Total Operator</div>
+                <div class="stat-value">{{ operators }}</div>
             </div>
 
         </div>
     </div>
 </template>
 <script>
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import BaseLayout from '../Layouts/BaseLayout.vue';
 
 export default {
     layout: BaseLayout,
     props: {
-        auth: Object
+        rooms: String,
+        operators: String,
     },
     components: {
         Head
     }
+    ,
+    setup() {
+        const auth = usePage().props.auth
 
+        return { auth }
+    }
 
 }
 </script>

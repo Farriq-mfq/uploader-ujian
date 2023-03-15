@@ -1,10 +1,12 @@
 <template lang="">
-   <ul class="menu p-4 w-80 bg-slate-900 text-white space-y-3 shadow-lg">
-        <div class="bg-white text-black p-2 rounded-xl grid place-items-center mb-4">
-            <h1 class="font-extrabold text-4xl shadow-sm shadow-white uppercase text-center">
-                SIUP <br>
+   <ul class="menu p-4 w-80 bg-slate-900 text-white space-y-3 shadow-lg relative">
+    <div class="absolute bottom-5 lef-0 text-sm">&copy; Build By farriq muwaffaq</div>
+        <Link :href="$route('dashboard')" class="p-2  grid place-items-center mb-4">
+            <h1 class="font-extrabold text-4xl shadow-white uppercase text-center tracking-widest">
+                SIUP
             </h1>
-        </div>
+            <p class="mt-3">Selamat datang</p>
+        </Link>
         <li>
             <BaseLink path="dashboard" :class="`${$page.component === 'index' ? `bg-primary`:``}`"  #title>
                 <div class="flex space-x-3 items-center">
@@ -51,7 +53,8 @@
 import { HomeIcon, FolderOpenIcon, ComputerDesktopIcon, InboxStackIcon, UserIcon, PowerIcon } from '@heroicons/vue/24/solid'
 import BaseLink from './BaseLink.vue';
 import Swal from 'sweetalert2'
-import { usePage } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+
 
 export default {
     components: {
@@ -59,7 +62,7 @@ export default {
         HomeIcon,
         FolderOpenIcon,
         ComputerDesktopIcon,
-        InboxStackIcon, UserIcon, PowerIcon
+        InboxStackIcon, UserIcon, PowerIcon, Link
     },
     setup() {
         const auth = usePage().props.auth

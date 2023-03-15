@@ -10,14 +10,6 @@ export default {
     components: {
         Bars3CenterLeftIcon
     },
-
-    watch: {
-        '$page.url': function (newUrl, oldUrl) {
-            if (!window.matchMedia('(min-width:1024px)').matches) {
-                this.$refs.bars.click()
-            }
-        }
-    }
 }
 </script>
 <style lang="">
