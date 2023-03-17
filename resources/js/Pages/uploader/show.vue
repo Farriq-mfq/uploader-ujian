@@ -104,6 +104,7 @@
                 <table class="table w-full rounded-none" v-if="room.uploads.length">
                     <thead>
                         <tr>
+                            <th>No</th>
                             <th>NIM</th>
                             <th>Nama</th>
                             <th>File</th>
@@ -113,7 +114,8 @@
                     </thead>
                     <tbody>
                         <!-- row 1 -->
-                        <tr v-for="upload in room.uploads">
+                        <tr v-for="(upload, index) in room.uploads">
+                            <td>{{ index + 1 }}</td>
                             <td>{{ upload.nim }}</td>
                             <td>{{ upload.name }}</td>
                             <td>{{ upload.file }}</td>
