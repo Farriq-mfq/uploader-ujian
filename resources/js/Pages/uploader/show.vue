@@ -114,13 +114,16 @@
                     </thead>
                     <tbody>
                         <!-- row 1 -->
-                        <tr v-for="(upload, index) in room.uploads">
+                        <tr v-for="(upload, index) in room.uploads" class="text-md">
                             <td>{{ index + 1 }}</td>
                             <td>{{ upload.nim }}</td>
                             <td>{{ upload.name }}</td>
                             <td>{{ upload.file }}</td>
                             <td v-if="room.type_field">{{ upload.type }}</td>
-                            <td>{{ upload.created_at }}</td>
+                            <td>{{ new Date(upload.created_at).getFullYear() }}/{{ new Date(upload.created_at).getMonth()
+                            }}/{{ new Date(upload.created_at).getDay() }}&nbsp;{{ new Date(upload.created_at).getHours()
+}}:{{ new Date(upload.created_at).getMinutes() }}:{{ new
+    Date(upload.created_at).getSeconds() }}</td>
                         </tr>
                     </tbody>
                 </table>
