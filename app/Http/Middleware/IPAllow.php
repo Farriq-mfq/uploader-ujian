@@ -26,7 +26,7 @@ class IPAllow
         if ($condition === 'check') {
             if ($room) {
                 if (count($room->allowsIP)) {
-                    $ipPc = gethostbyname(gethostname());
+                    $ipPc = $request->getClientIp();
                     if ($this->check_ip_exist($ipPc, $room->allowsIP)) {
                         return $next($request);
                     }

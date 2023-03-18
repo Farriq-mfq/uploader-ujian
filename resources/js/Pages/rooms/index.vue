@@ -34,7 +34,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="room in rooms.data" :key="room.id">
+                    <tr v-for="(room, index) in rooms.data" :key="room.id">
 
                         <td>
                     <tr>
@@ -91,9 +91,10 @@
                             data-tip="Edit Room">
                         <PencilIcon class="h-5 text-white" />
                         </Link>
-                        <button v-if="auth.role == 'master'" class="btn btn-error btn-sm tooltip" data-tip="Hapus Room" type="button"
-                            @click="handleDelete(room.id)">
-                            <TrashIcon class="h-5 text-white" />
+                        <button v-if="auth.role == 'master'" class="btn btn-error btn-sm tooltip" data-tip="Hapus Room"
+                            type="button" @click="handleDelete(room.id, index)">
+                            <TrashIcon class=" h-5
+                                                text-white" />
                         </button>
                         <button class="btn btn-primary btn-sm tooltip" data-tip="Copy Link Room" type="button"
                             @click="handleCopy($route('uploader.show', room.name))">
@@ -124,12 +125,12 @@ import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import BaseLayout from '../../Layouts/BaseLayout.vue';
 import Swal from 'sweetalert2'
 import Pagintion from "../../components/Pagination.vue"
-import { PencilIcon, TrashIcon, LinkIcon, ComputerDesktopIcon, ClipboardDocumentIcon } from '@heroicons/vue/24/solid';
+import { PencilIcon, TrashIcon, LinkIcon, ComputerDesktopIcon, ClipboardDocumentIcon, ArrowPathIcon } from '@heroicons/vue/24/solid';
 import ListFile from '../../components/ListFile.vue'
 import { useToast } from 'vue-toastification'
 export default {
     layout: BaseLayout,
-    components: { Link, Pagintion, PencilIcon, TrashIcon, LinkIcon, ComputerDesktopIcon, ClipboardDocumentIcon, ListFile, Head },
+    components: { Link, Pagintion, PencilIcon, TrashIcon, LinkIcon, ComputerDesktopIcon, ClipboardDocumentIcon, ListFile, Head, ArrowPathIcon },
     props: {
         rooms: Array
     },
@@ -138,7 +139,6 @@ export default {
             keyword: null,
             disableAttch: false,
             formAttch: null,
-            set_id_modal: null
         }
     },
     watch: {
@@ -205,7 +205,7 @@ export default {
             })
         },
 
-        handleDelete(id) {
+        handleDelete(id, index) {
             const app = this;
             Swal.fire({
                 title: 'Yakin ?',
@@ -220,7 +220,11 @@ export default {
                 if (result.isConfirmed) {
                     this.$inertia.delete(this.$route('rooms.destroy', id), {}, {
                         preserveState: true, preserveScroll: true,
+                        onProgress() {
+                            app.loading_index = index;
+                        },
                         onSuccess: () => {
+                            app.loading_index = -1;
                             Swal.fire(
                                 'Berhasil!',
                                 'Berhasil menghapus rooms.',
@@ -228,7 +232,7 @@ export default {
                             )
                         },
                         onError: (err) => {
-                            console.log(err)
+                            app.loading_index = -1;
                             app.toast(err)
                         },
                     })

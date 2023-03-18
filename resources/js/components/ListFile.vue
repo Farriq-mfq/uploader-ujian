@@ -1,6 +1,6 @@
 <template >
     <li
-        class="w-full bg-white group  rounded-lg border p-2 border-gray-300 flex space-x-2 relative items-center z-10 overflow-hidden my-2">
+        class="w-full bg-white group dark:bg-slate-800 rounded-lg border p-2 border-gray-300 dark:border-slate-400 flex space-x-2 relative items-center z-10 overflow-hidden my-2">
         <FolderIcon class="h-5 text-slate-900" />
         <div class="text-sm font-bold flex-1"><span>{{ name }}</span> ({{ formatSize
         }})</div>

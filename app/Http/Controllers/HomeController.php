@@ -19,12 +19,13 @@ class HomeController extends Controller
     }
     public function index()
     {
+        $data = [];
         if (Auth::user()->role === "operator") {
-            $rooms = $this->room->where('operator_id', Auth::user()->id)->count();
+            $data['rooms'] = $this->room->where('operator_id', Auth::user()->id)->count();
         } else if (Auth::user()->role === "master") {
-            $operators = $this->user->where('role', 'operator')->count();
-            $rooms = $this->room->count();
+            $data['rooms'] = $this->room->count();
+            $data['operators'] = $this->user->where('role', 'operator')->count();
         }
-        return Inertia::render('index', ['rooms' => $rooms, 'operators' => $operators]);
+        return Inertia::render('index', $data);
     }
 }

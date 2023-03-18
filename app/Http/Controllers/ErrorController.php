@@ -12,9 +12,9 @@ class ErrorController extends Controller
     {
         return Inertia::render('error/index');
     }
-    public function block()
+    public function block(Request $request)
     {
-        return Inertia::render('error/block', ['ip' => gethostbyname(gethostname())]);
+        return Inertia::render('error/block', ['ip' => $request->getClientIp()]);
     }
     public function not_found()
     {

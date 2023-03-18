@@ -28,10 +28,10 @@ class UploaderController extends Controller
         $this->attch = new AttchRoom();
         $this->upload = new Upload();
     }
-    public function index()
+    public function index(Request $request)
     {
         // get room by ip private
-        $ip = gethostbyname(gethostname());
+        $ip = $request->getClientIp();
         $allowRoom = $this->allowIP->where('ip', $ip)->with('room')->get();
         // get room global ip
         $rooms = $this->room->doesnthave('allowsIP')->get();

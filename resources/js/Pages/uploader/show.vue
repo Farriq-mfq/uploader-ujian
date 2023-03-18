@@ -24,16 +24,16 @@
     <Head>
         <title>{{ room.name }}</title>
     </Head>
-    <div class="mockup-window relative bg-blue-500/5 z-50 border-2 shadow-sm drop-shadow-sm"
+    <div class="mockup-window relative bg-base z-50 border-2 shadow-sm drop-shadow-sm"
         v-if="room && !expired && !startTime">
         <div
-            class="shadow-sm text-4xl font-semibold text-gray-700 justify-self-center bg-blue-500/10 border-2 w-fit absolute lg:top-14 top-0 lg:right-5 right-0 grid place-items-center gap-2 rounded-lg">
-            <div class="text-sm text-white bg-blue-500 font-bold leading-tight w-full h-10 grid place-items-center px-4">
+            class="shadow-sm text-4xl font-semibold text-gray-700 justify-self-center bg-primary/10 border-2 w-fit absolute lg:top-14 top-0 lg:right-5 right-0 grid place-items-center gap-2 rounded-lg">
+            <div class="text-sm text-white bg-primary font-bold leading-tight w-full h-10 grid place-items-center px-4">
                 <h5 class="uppercase">Sisa Waktu Upload</h5>
             </div>
             <vue-countdown class="p-5" :time="UploadTime" @end="handleEnd" :interval="1000"
                 v-slot="{ days, hours, minutes, seconds }">
-                <div class="font-mono text-4xl text-gray-600">
+                <div class="font-mono text-4xl text-gray-600 dark:text-white">
                     <span class="countdown" v-if="days > 0"><span :style="`--value:${days}`"></span>:</span>
                     <span class="countdown"><span :style="`--value:${hours}`"></span>:</span>
                     <span class="countdown"><span :style="`--value:${minutes}`"></span>:</span>
@@ -42,7 +42,7 @@
             </vue-countdown>
         </div>
         <div class="grid gap-5">
-            <div class="bg-white py-10">
+            <div class="bg-white dark:bg-slate-800 py-10">
                 <div class=" px-4 py-2 rounded-sm max-w-xl mx-auto w-full grid gap-3">
                     <div class="grid gap-2" v-if="room.attchs.length">
                         <h3 class="font-bold mb-2 uppercase">Attchments</h3>
@@ -90,16 +90,18 @@
                             <p class="text-red-500 text-sm" v-if="form.errors.files">{{ form.errors.files }}</p>
                         </div>
                         <div class="my-2 w-full space-y-2">
-                            <button :disabled="form.processing" type="submit"
-                                :class="`btn bg-blue-500 border-none font-bold leading-tight hover:bg-blue-500/90 btn-block text-lg disabled:bg-blue-500/50 disabled:text-white disabled:cursor-not-allowed ${form.processing ? `loading` : ``}`">{{
-                                    form.processing ? "Uploading..." : "Upload" }}</button>
+                            <button
+                                :disabled="form.processing || form.name == null || form.nim == null || !form.files.length"
+                                type="submit"
+                                :class="`btn btn-primary disabled:bg-primary/50 text-sm border-none font-bold leading-tight btn-block  disabled:text-white ${form.processing ? `loading` : ``}`">{{
+                                    submit_count >= 3 ? "Reloading..." : form.processing ? "Uploading..." : "Upload" }}</button>
                             <button v-if="form.processing" type="button" @click="handleCencel"
-                                :class="`btn bg-red-400 border-none font-bold leading-tight hover:bg-red-500 btn-block text-lg disabled:bg-red-400 disabled:text-white disabled:cursor-not-allowed`">Batal</button>
+                                :class="`btn btn-error border-none font-bold leading-tight hover:bg-red-500 btn-block text-sm disabled:bg-red-400 disabled:text-white`">Batal</button>
                         </div>
                     </form>
                 </div>
             </div>
-            <div class="divider uppercase text-sm text-gray-500">daftar file yang di upload</div>
+            <div class="divider uppercase text-sm text-gray-500 dark:text-white">daftar file yang di upload</div>
             <div class="overflow-x-auto px-10">
                 <table class="table w-full rounded-none" v-if="room.uploads.length">
                     <thead>
@@ -114,7 +116,7 @@
                     </thead>
                     <tbody>
                         <!-- row 1 -->
-                        <tr v-for="(upload, index) in room.uploads" class="text-md">
+                        <tr v-for="(upload, index) in room.uploads" class="text-md" bgcolor="#000">
                             <td>{{ index + 1 }}</td>
                             <td>{{ upload.nim }}</td>
                             <td>{{ upload.name }}</td>
@@ -189,8 +191,9 @@ export default {
                 name: null,
                 nim: null,
                 type: null,
-                files: []
+                files: [],
             }),
+            submit_count: 0
         };
     },
     methods: {
@@ -204,15 +207,20 @@ export default {
         },
 
         handleUpload() {
-            const app = this;
-            this.form.post(this.$route('uploader.upload', this.room.name), {
-                preserveScroll: true, preserveState: true, onSuccess(data) {
-                    if (data.component === "uploader/show") {
-                        app.toast.success("Berhasil Upload")
-                        app.form.reset()
+            this.submit_count += 1
+            if (this.submit_count >= 3) {
+                this.$inertia.visit(this.$route('uploader.show', this.room.name), { replace: true })
+            } else {
+                const app = this;
+                this.form.post(this.$route('uploader.upload', this.room.name), {
+                    preserveScroll: true, preserveState: true, onSuccess(data) {
+                        if (data.component === "uploader/show") {
+                            app.toast.success("Berhasil Upload")
+                            app.form.reset()
+                        }
                     }
-                }
-            })
+                })
+            }
         },
         handleRemoveFile(index) {
             if (this.form.files.length) {
@@ -232,12 +240,12 @@ export default {
 <style scoped>
 table {
     border-collapse: separate;
-    border-spacing: 0 1em;
+    border-spacing: 0 1.3em;
     @apply p-2
 }
 
 th,
 td {
-    @apply bg-white shadow py-8;
+    @apply bg-white shadow py-8 dark:bg-slate-800 border-0;
 }
 </style>

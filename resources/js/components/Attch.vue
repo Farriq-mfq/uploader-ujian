@@ -1,7 +1,7 @@
 <template>
-    <div class="w-full border bg-white p-3 rounded-lg relative flex items-center text-sm">
+    <div class="w-full border bg-white dark:bg-slate-800 dark:border-slate-400 p-3 rounded-lg relative flex items-center text-sm">
         {{ attch.file }}
-        <a class="rounded-lg btn-sm bg-blue-500 absolute right-3 flex items-center" :href="$route('uploader.download.attch', attch.id)">
+        <a class="rounded-lg btn-sm bg-primary absolute right-3 flex items-center" :href="$route('uploader.download.attch', attch.id)">
             <ArrowDownTrayIcon class="h-5 text-white" />
         </a>
     </div>
