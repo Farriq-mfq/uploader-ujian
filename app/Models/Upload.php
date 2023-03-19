@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Upload extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'nim', 'type', 'file', 'room_id'];
+    protected $fillable = ['name', 'nim', 'type', 'file', 'ip', 'room_id'];
     public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class, 'room_id');

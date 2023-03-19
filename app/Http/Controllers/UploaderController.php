@@ -48,6 +48,9 @@ class UploaderController extends Controller
         $format1 = "KELAS_MAKUL_NIM_TYPE";
         $format2 = "KELAS_MAKUL_NIM";
         $room = $this->room->where("name", $room)->first();
+        if ($room->uploads()->where('ip', $request->getClientIp())->first() != null) {
+            return redirect()->back()->withErrors(['ip' => 'IP ' . $request->getClientIp() . ' Sudah pernah Upload']);
+        }
         $nama_file_format_1 = strtoupper(str_replace(["KELAS", "MAKUL", "NIM", "TYPE"], [$room->kelas, str_replace(" ", "_", $room->mata_kuliah), $request->nim, $request->type], $format1));
         $nama_file_format_2 = strtoupper(str_replace(["KELAS", "MAKUL", "NIM"], [$room->kelas, str_replace(" ", "_", $room->mata_kuliah), $request->nim], $format2));
         if (count($request->file('files')) > 1) {
@@ -59,6 +62,7 @@ class UploaderController extends Controller
             $data = [
                 'name' => $request->name,
                 'nim' => $request->nim,
+                'ip' => $request->getClientIp(),
                 'file' => $convert_zip,
             ];
             if ($room->type_field) {
@@ -113,37 +117,37 @@ class UploaderController extends Controller
             $data = [
                 'name' => $request->name,
                 'nim' => $request->nim,
+                'ip' => $request->getClientIp(),
                 'file' => $single_file,
             ];
             if ($room->type_field) {
                 $data = [...$data, "type" => $request->type];
             }
-            $insertUpload = $room->uploads()->create($data);
-            if ($insertUpload) {
-                if ($room->ftp) {
-                    try {
-                        if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $room->ftp, $match)) {
-                            if (!extension_loaded('ftp')) {
-                                throw new \RuntimeException("FTP extension not loaded.");
-                            }
-
-                            $connection = new FtpConnection($match[3], $match[1], $match[2]);
-                            $connection->open();
-
-                            $config = new FtpConfig($connection);
-                            $config->setPassive(true);
-
-                            $client = new FtpClient($connection);
-                            $client->upload($request->file('files')[0], $room->folder . "/" . $single_file);
-
-                            $connection->close();
+            if ($room->ftp) {
+                try {
+                    if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $room->ftp, $match)) {
+                        if (!extension_loaded('ftp')) {
+                            throw new \RuntimeException("FTP extension not loaded.");
                         }
-                    } catch (\Throwable $ex) {
-                        return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
+
+                        $connection = new FtpConnection($match[3], $match[1], $match[2]);
+                        $connection->open();
+
+                        $config = new FtpConfig($connection);
+                        $config->setPassive(true);
+
+                        $client = new FtpClient($connection);
+                        $client_upload = $client->upload($request->file('files')[0], $room->folder . "/" . $single_file);
+                        if ($client_upload) {
+                            $room->uploads()->create($data);
+                        }
+                        $connection->close();
                     }
-                } else {
-                    Storage::putFileAs($room->folder, $request->file('files')[0], $single_file);
+                } catch (\Throwable $ex) {
+                    return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
                 }
+            } else {
+                Storage::putFileAs($room->folder, $request->file('files')[0], $single_file);
             }
         }
     }

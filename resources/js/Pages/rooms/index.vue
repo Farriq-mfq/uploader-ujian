@@ -34,7 +34,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(room, index) in rooms.data" :key="room.id">
+                    <tr v-for="room in rooms.data" :key="room.id">
 
                         <td>
                     <tr>
@@ -92,9 +92,8 @@
                         <PencilIcon class="h-5 text-white" />
                         </Link>
                         <button v-if="auth.role == 'master'" class="btn btn-error btn-sm tooltip" data-tip="Hapus Room"
-                            type="button" @click="handleDelete(room.id, index)">
-                            <TrashIcon class=" h-5
-                                                text-white" />
+                            type="button" @click="handleDelete(room.id)">
+                            <TrashIcon class=" h-5  text-white" />
                         </button>
                         <button class="btn btn-primary btn-sm tooltip" data-tip="Copy Link Room" type="button"
                             @click="handleCopy($route('uploader.show', room.name))">
@@ -205,7 +204,7 @@ export default {
             })
         },
 
-        handleDelete(id, index) {
+        handleDelete(e, id) {
             const app = this;
             Swal.fire({
                 title: 'Yakin ?',
@@ -220,11 +219,8 @@ export default {
                 if (result.isConfirmed) {
                     this.$inertia.delete(this.$route('rooms.destroy', id), {}, {
                         preserveState: true, preserveScroll: true,
-                        onProgress() {
-                            app.loading_index = index;
-                        },
                         onSuccess: () => {
-                            app.loading_index = -1;
+                            console.log(e.target);
                             Swal.fire(
                                 'Berhasil!',
                                 'Berhasil menghapus rooms.',

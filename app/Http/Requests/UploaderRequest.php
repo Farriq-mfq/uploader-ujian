@@ -30,7 +30,6 @@ class UploaderRequest extends FormRequest
     public function rules(): array
     {
         $room = $this->room->where('name', request('room'))->first();
-        $extensions = explode(",", str_replace(".", "", $room->extensions));
         return [
             'name' => 'required',
             'nim' => [

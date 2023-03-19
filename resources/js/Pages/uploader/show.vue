@@ -24,8 +24,7 @@
     <Head>
         <title>{{ room.name }}</title>
     </Head>
-    <div class="mockup-window relative bg-base z-50 border-2 shadow-sm drop-shadow-sm"
-        v-if="room && !expired && !startTime">
+    <div class="mockup-window relative bg-base z-50 border shadow-md" v-if="room && !expired && !startTime">
         <div
             class="shadow-sm text-4xl font-semibold text-gray-700 justify-self-center bg-primary/10 border-2 w-fit absolute lg:top-14 top-0 lg:right-5 right-0 grid place-items-center gap-2 rounded-lg">
             <div class="text-sm text-white bg-primary font-bold leading-tight w-full h-10 grid place-items-center px-4">
@@ -51,6 +50,7 @@
                     <h3 class="font-bold uppercase">
                         Room {{ room.name }}
                     </h3>
+
                     <form action="" @submit.prevent="handleUpload">
                         <div class="my-2 w-full">
                             <input :disabled="form.processing" type="text" v-model="form.name" placeholder="Masukan Nama"
@@ -91,18 +91,28 @@
                         </div>
                         <div class="my-2 w-full space-y-2">
                             <button
-                                :disabled="form.processing || form.name == null || form.nim == null || !form.files.length"
+                                :disabled="form.processing || form.name == null || form.nim == null || !form.files.length || submit_count >= 3"
                                 type="submit"
                                 :class="`btn btn-primary disabled:bg-primary/50 text-sm border-none font-bold leading-tight btn-block  disabled:text-white ${form.processing ? `loading` : ``}`">{{
                                     submit_count >= 3 ? "Reloading..." : form.processing ? "Uploading..." : "Upload" }}</button>
                             <button v-if="form.processing" type="button" @click="handleCencel"
                                 :class="`btn btn-error border-none font-bold leading-tight hover:bg-red-500 btn-block text-sm disabled:bg-red-400 disabled:text-white`">Batal</button>
                         </div>
+                        <div class="text-red-500 text-sm" v-if="errors.ftp">
+                            {{ errors.ftp }}
+                        </div>
+                        <div class="text-red-500 text-sm" v-if="errors.ip">
+                            {{ errors.ip }}
+                        </div>
                     </form>
                 </div>
             </div>
             <div class="divider uppercase text-sm text-gray-500 dark:text-white">daftar file yang di upload</div>
             <div class="overflow-x-auto px-10">
+                <button type="button" @click.prevent="handleReload" class="btn btn-primary btn-sm w-fit py-1 px-2 flex justify-center items-center">
+                    <ArrowPathIcon class="h-5" />
+                    &nbsp;Refresh
+                </button>
                 <table class="table w-full rounded-none" v-if="room.uploads.length">
                     <thead>
                         <tr>
@@ -111,21 +121,22 @@
                             <th>Nama</th>
                             <th>File</th>
                             <th v-if="room.type_field">Type</th>
-                            <th>Timestamps</th>
+                            <th>Tanggal</th>
                         </tr>
                     </thead>
                     <tbody>
                         <!-- row 1 -->
-                        <tr v-for="(upload, index) in room.uploads" class="text-md" bgcolor="#000">
+                        <tr v-for="(upload, index) in room.uploads" class="text-md">
                             <td>{{ index + 1 }}</td>
                             <td>{{ upload.nim }}</td>
                             <td>{{ upload.name }}</td>
                             <td>{{ upload.file }}</td>
                             <td v-if="room.type_field">{{ upload.type }}</td>
-                            <td>{{ new Date(upload.created_at).getFullYear() }}/{{ new Date(upload.created_at).getMonth()
-                            }}/{{ new Date(upload.created_at).getDay() }}&nbsp;{{ new Date(upload.created_at).getHours()
-}}:{{ new Date(upload.created_at).getMinutes() }}:{{ new
-    Date(upload.created_at).getSeconds() }}</td>
+                            <td>
+                                <div class="badge badge-primary">{{ new Date(upload.created_at).getFullYear() }}/{{ new
+                                    Date(upload.created_at).getMonth()
+                                }}/{{ new Date(upload.created_at).getDate() }}</div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -138,7 +149,7 @@
     </div>
 </template>
 <script>
-import { InboxIcon } from '@heroicons/vue/24/solid';
+import { InboxIcon, ArrowPathIcon } from '@heroicons/vue/24/solid';
 import { Head, useForm } from '@inertiajs/vue3';
 import Attch from '../../components/Attch.vue';
 import ListFile from '../../components/ListFile.vue';
@@ -147,6 +158,7 @@ import Upload from '../../components/Upload.vue';
 import { ConvertDate } from '../../helper/convertDate';
 import UploaderLayout from '../../Layouts/UploaderLayout.vue';
 import { useToast } from 'vue-toastification'
+import { router } from '@inertiajs/vue3'
 export default {
     layout: UploaderLayout,
     components: {
@@ -155,10 +167,11 @@ export default {
         InboxIcon,
         PlayRandomImg,
         Attch,
-        Head
+        Head, ArrowPathIcon
     },
     props: {
         room: Object | null,
+        errors: Object
     },
     computed: {
         startTime() {
@@ -233,6 +246,9 @@ export default {
         handleCencel() {
             this.form.cancel()
         },
+        handleReload() {
+            router.reload({ only: ['room'] })
+        }
     }
 
 }
@@ -240,12 +256,12 @@ export default {
 <style scoped>
 table {
     border-collapse: separate;
-    border-spacing: 0 1.3em;
+    border-spacing: 0 1.5em;
     @apply p-2
 }
 
-th,
+table th,
 td {
-    @apply bg-white shadow py-8 dark:bg-slate-800 border-0;
+    @apply bg-white py-8 dark:bg-slate-800 border-y shadow-sm border-gray-300 last-of-type:rounded-r-2xl first-of-type:rounded-l-2xl first-of-type:border-l last-of-type:border-r;
 }
 </style>

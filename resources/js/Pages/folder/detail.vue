@@ -27,6 +27,7 @@
                         <th>Nama</th>
                         <th>NIM</th>
                         <th>Type</th>
+                        <th>IP</th>
                         <th>File</th>
                         <th>Actions</th>
                     </tr>
@@ -36,6 +37,7 @@
                         <td>{{ upload.name }}</td>
                         <td>{{ upload.nim }}</td>
                         <td>{{ upload.type == null ? "Tidak diberi type soal" : upload.type }}</td>
+                        <td>{{ upload.ip }}</td>
                         <td>{{ upload.file }}</td>
                         <td>
                             <button class="btn btn-error btn-sm tooltip" data-tip="Hapus Uploader" type="button"

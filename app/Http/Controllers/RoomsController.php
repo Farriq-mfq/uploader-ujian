@@ -130,8 +130,12 @@ class RoomsController extends Controller
     public function edit(string $id)
     {
         $room = $this->room->find($id);
-        $operators = $this->user->where('role', 'operator')->select('id', 'name')->get();
-        return Inertia::render('rooms/edit', ['room' => $room, 'operators' => $operators]);
+        if ($room) {
+            $operators = $this->user->where('role', 'operator')->select('id', 'name')->get();
+            return Inertia::render('rooms/edit', ['room' => $room, 'operators' => $operators]);
+        } else {
+            return redirect(route('rooms.index'));
+        }
     }
 
     /**
@@ -204,38 +208,39 @@ class RoomsController extends Controller
      */
     public function destroy(string $id)
     {
-        if (Auth::user()->role === 'master') {
-            $find = $this->room->with('attchs')->find($id);
-            $this->room->where('id', $id)->delete();
-            if ($find->ftp) {
-                try {
-                    if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $find->ftp, $match)) {
-                        if (!extension_loaded('ftp')) {
-                            throw new \RuntimeException("FTP extension not loaded.");
-                        }
+        // if (Auth::user()->role === 'master') {
+        //     $find = $this->room->with('attchs')->find($id);
+        //     $this->room->where('id', $id)->delete();
+        //     if ($find->ftp) {
+        //         try {
+        //             if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $find->ftp, $match)) {
+        //                 if (!extension_loaded('ftp')) {
+        //                     throw new \RuntimeException("FTP extension not loaded.");
+        //                 }
 
-                        $connection = new FtpConnection($match[3], $match[1], $match[2]);
-                        $connection->open();
+        //                 $connection = new FtpConnection($match[3], $match[1], $match[2]);
+        //                 $connection->open();
 
-                        $config = new FtpConfig($connection);
-                        $config->setPassive(true);
+        //                 $config = new FtpConfig($connection);
+        //                 $config->setPassive(true);
 
-                        $client = new FtpClient($connection);
-                        $client->removeDir($find->folder);
-                        $connection->close();
-                    }
-                } catch (\Throwable $ex) {
-                    return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
-                }
-            }
-            foreach ($find->attchs as $file) {
-                Storage::delete("attch/" . $find->name . "/" . $file->file);
-            }
-            Storage::deleteDirectory($find->folder);
-            Storage::deleteDirectory('attch/' . $find->name);
-        } else {
-            return redirect(route('rooms.index'));
-        }
+        //                 $client = new FtpClient($connection);
+        //                 $client->removeDir($find->folder);
+        //                 $connection->close();
+        //             }
+        //         } catch (\Throwable $ex) {
+        //             return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
+        //         }
+        //     }
+        //     foreach ($find->attchs as $file) {
+        //         Storage::delete("attch/" . $find->name . "/" . $file->file);
+        //     }
+        //     Storage::deleteDirectory($find->folder);
+        //     Storage::deleteDirectory('attch/' . $find->name);
+        // } else {
+        //     return redirect(route('rooms.index'));
+        // }
+        dd("");
     }
 
 
