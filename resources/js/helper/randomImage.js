@@ -35,6 +35,5 @@ export const randomImg = () => {
     ];
 
     const random = Math.floor(Math.random() * img.length);
-    console.log(random);
     return `/random/${img[random]}`;
 };

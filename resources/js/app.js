@@ -18,5 +18,8 @@ createInertiaApp({
         app.use(Toast, {});
         app.component(VueCountdown.name, VueCountdown);
         app.use(plugin).mount(el);
+        app.config.devtools = false;
+        app.config.debug = false;
+        app.config.silent = true;
     },
 });
