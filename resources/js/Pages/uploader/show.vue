@@ -51,7 +51,7 @@
                         Room {{ room.name }}
                     </h3>
 
-                    <form action="" @submit.prevent="handleUpload">
+                    <form @submit.prevent="handleUpload">
                         <div class="my-2 w-full">
                             <input :disabled="form.processing" type="text" v-model="form.name" placeholder="Masukan Nama"
                                 class="input input-bordered w-full " />
@@ -94,7 +94,7 @@
                                 :disabled="form.processing || form.name == null || form.nim == null || !form.files.length || submit_count >= 3"
                                 type="submit"
                                 :class="`btn btn-primary disabled:bg-primary/50 text-sm border-none font-bold leading-tight btn-block  disabled:text-white ${form.processing ? `loading` : ``}`">{{
-                                    submit_count >= 3 ? "Reloading..." : form.processing ? "Uploading..." : "Upload" }}</button>
+                                    submit_count >= 3 ? "Reloading..." : form.processing ? "Uploading..." : "Upload" }} <CloudArrowUpIcon class="h-5 ml-2 animate-bounce" v-if="form.processing" /></button>
                             <button v-if="form.processing" type="button" @click="handleCencel"
                                 :class="`btn btn-error border-none font-bold leading-tight hover:bg-red-500 btn-block text-sm disabled:bg-red-400 disabled:text-white`">Batal</button>
                         </div>
@@ -109,7 +109,8 @@
             </div>
             <div class="divider uppercase text-sm text-gray-500 dark:text-white">daftar file yang di upload</div>
             <div class="overflow-x-auto px-10">
-                <button type="button" @click.prevent="handleReload" class="btn btn-primary btn-sm w-fit py-1 px-2 flex justify-center items-center">
+                <button type="button" @click.prevent="handleReload"
+                    class="btn btn-primary btn-sm w-fit py-1 px-2 flex justify-center items-center">
                     <ArrowPathIcon class="h-5" />
                     &nbsp;Refresh
                 </button>
@@ -149,7 +150,7 @@
     </div>
 </template>
 <script>
-import { InboxIcon, ArrowPathIcon } from '@heroicons/vue/24/solid';
+import { InboxIcon, ArrowPathIcon ,CloudArrowUpIcon} from '@heroicons/vue/24/solid';
 import { Head, useForm } from '@inertiajs/vue3';
 import Attch from '../../components/Attch.vue';
 import ListFile from '../../components/ListFile.vue';
@@ -167,7 +168,7 @@ export default {
         InboxIcon,
         PlayRandomImg,
         Attch,
-        Head, ArrowPathIcon
+        Head, ArrowPathIcon,CloudArrowUpIcon
     },
     props: {
         room: Object | null,
@@ -262,6 +263,6 @@ table {
 
 table th,
 td {
-    @apply bg-white py-8 dark:bg-slate-800 border-y shadow-sm border-gray-300 last-of-type:rounded-r-2xl first-of-type:rounded-l-2xl first-of-type:border-l last-of-type:border-r;
+    @apply bg-white py-8 dark:bg-slate-800 border-y shadow-lg border-gray-300 last-of-type:rounded-r-2xl first-of-type:rounded-l-2xl first-of-type:border-l last-of-type:border-r;
 }
 </style>
