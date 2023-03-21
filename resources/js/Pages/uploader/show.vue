@@ -128,7 +128,7 @@
                             <th>Nama</th>
                             <th>File</th>
                             <th v-if="room.type_field">Type</th>
-                            <th>TimesTamps</th>
+                            <th>Tanggal</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -296,6 +296,6 @@ table {
 
 table th,
 td {
-    @apply bg-white py-8 dark:bg-slate-800 border-y shadow-lg dark:shadow-none border-gray-300 last-of-type:rounded-r-2xl first-of-type:rounded-l-2xl first-of-type:border-l last-of-type:border-r;
+    @apply bg-white py-8 dark:bg-slate-800 border-y shadow-none border-gray-300 last-of-type:rounded-r-2xl first-of-type:rounded-l-2xl first-of-type:border-l last-of-type:border-r;
 }
 </style>

@@ -8,12 +8,12 @@
             <XMarkIcon class="text-red-500 h-5" v-if="!loading" />
         </button>
         <div class="absolute right-3 flex space-x-1" v-if="progress">
-            <CloudArrowUpIcon class="text-blue-500 h-5" />
+            <CloudArrowUpIcon class="text-primary dark:text-teal-500 h-5" />
             <span class="text-sm font-bold dark:text-white">{{ progress.percentage }}%</span>
         </div>
         <progress v-if="progress"
-            :class="`bg-transparent absolute -left-2 progress progress-info rounded-none  h-full w-full transition-all ease-linear dark:progress-primary`"
-            style="z-index: -1; opacity: 0.3;" :value="progress.percentage" max="100">
+            :class="`bg-transparent absolute -left-2 progress progress-primary rounded-none  h-full w-full transition-all ease-linear`"
+            style="z-index: -1; opacity: 0.3; border-radius: 0px !important;" :value="progress.percentage" max="100">
         </progress>
     </li>
 </template>
@@ -36,3 +36,16 @@ export default {
 
 }
 </script>
+<style scoped>
+progress::-webkit-progress-bar {
+    border-radius: 0px !important;
+}
+
+progress::-webkit-progress-value {
+    border-radius: 0px !important;
+}
+
+progress::-moz-progress-bar {
+    border-radius: 0px !important;
+}
+</style>
