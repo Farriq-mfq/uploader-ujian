@@ -65,6 +65,17 @@
                 </div>
                 <div class="form-control w-full">
                     <label class="label ">
+                        <span class="label-text">
+                            Maksimal size upload (kb)
+                        </span>
+                    </label>
+                    <input type="number" v-model="form.max_size" placeholder="Masukan maksimal size upload (kb)"
+                        class="input input-bordered w-full" />
+                    <p class="text-red-500 text-sm" v-if="form.errors.max_size">{{ form.errors.max_size }}</p>
+
+                </div>
+                <div class="form-control w-full">
+                    <label class="label ">
                         <span class="label-text">Option Extensions note:pisahkan dengan (,)</span>
                     </label>
                     <input type="text" v-model="form.extensions"
@@ -147,6 +158,7 @@ export default {
                 type_field: false,
                 extensions: null,
                 ftp: null,
+                max_size: null,
                 operator: null,
                 ip: []
             }),

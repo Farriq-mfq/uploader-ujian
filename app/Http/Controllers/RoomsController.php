@@ -83,10 +83,9 @@ class RoomsController extends Controller
             "extensions" => $request->extensions,
             "type_field" => $request->type_field,
             'ftp' => $request->ftp,
+            "max_size" => $request->max_size,
             'operator_id' => $request->operator
         ];
-
-
         $create = $this->room->create($data);
         if ($request->ftp) {
             try {
@@ -154,9 +153,10 @@ class RoomsController extends Controller
             'mata_kuliah' => $request->mata_kuliah,
             "status" => $request->status,
             "extensions" => $request->extensions,
+            "max_size" => $request->max_size,
             "type_field" => $request->type_field,
             'ftp' => $request->ftp,
-            'operator_id' => $request->operator
+            'operator_id' => $request->operator,
         ];
         $update = $this->room->where('id', $id)->update($data);
         if ($request->ftp) {
@@ -208,39 +208,38 @@ class RoomsController extends Controller
      */
     public function destroy(string $id)
     {
-        // if (Auth::user()->role === 'master') {
-        //     $find = $this->room->with('attchs')->find($id);
-        //     $this->room->where('id', $id)->delete();
-        //     if ($find->ftp) {
-        //         try {
-        //             if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $find->ftp, $match)) {
-        //                 if (!extension_loaded('ftp')) {
-        //                     throw new \RuntimeException("FTP extension not loaded.");
-        //                 }
+        if (Auth::user()->role === 'master') {
+            $find = $this->room->with('attchs')->find($id);
+            $this->room->where('id', $id)->delete();
+            if ($find->ftp) {
+                try {
+                    if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $find->ftp, $match)) {
+                        if (!extension_loaded('ftp')) {
+                            throw new \RuntimeException("FTP extension not loaded.");
+                        }
 
-        //                 $connection = new FtpConnection($match[3], $match[1], $match[2]);
-        //                 $connection->open();
+                        $connection = new FtpConnection($match[3], $match[1], $match[2]);
+                        $connection->open();
 
-        //                 $config = new FtpConfig($connection);
-        //                 $config->setPassive(true);
+                        $config = new FtpConfig($connection);
+                        $config->setPassive(true);
 
-        //                 $client = new FtpClient($connection);
-        //                 $client->removeDir($find->folder);
-        //                 $connection->close();
-        //             }
-        //         } catch (\Throwable $ex) {
-        //             return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
-        //         }
-        //     }
-        //     foreach ($find->attchs as $file) {
-        //         Storage::delete("attch/" . $find->name . "/" . $file->file);
-        //     }
-        //     Storage::deleteDirectory($find->folder);
-        //     Storage::deleteDirectory('attch/' . $find->name);
-        // } else {
-        //     return redirect(route('rooms.index'));
-        // }
-        dd("");
+                        $client = new FtpClient($connection);
+                        $client->removeDir($find->folder);
+                        $connection->close();
+                    }
+                } catch (\Throwable $ex) {
+                    return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
+                }
+            }
+            foreach ($find->attchs as $file) {
+                Storage::delete("attch/" . $find->name . "/" . $file->file);
+            }
+            Storage::deleteDirectory($find->folder);
+            Storage::deleteDirectory('attch/' . $find->name);
+        } else {
+            return redirect(route('rooms.index'));
+        }
     }
 
 

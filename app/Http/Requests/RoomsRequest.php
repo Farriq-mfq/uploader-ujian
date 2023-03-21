@@ -38,7 +38,7 @@ class RoomsRequest extends FormRequest
             'mata_kuliah' => 'required',
             'extensions' => 'required',
             'ftp' => 'regex:/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i|nullable',
-            'operator' => 'required'
+            'max_size' => "required|numeric"
         ];
     }
 
@@ -56,7 +56,8 @@ class RoomsRequest extends FormRequest
             'kelas.required' => "Kelas harus di isi",
             'mata_kuliah.required' => "Mata Kuliah harus di isi",
             'ftp.regex' => "Format ftp tidak sesuai",
-            'operator.required' => "operator harus di isi"
+            'max_size.required' => 'Maksimal upload harus di isi',
+            'max_size.numeric' => 'Maksimal size upload harus angka'
         ];
     }
 }

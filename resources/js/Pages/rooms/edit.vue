@@ -7,7 +7,6 @@
         <h1 class="text-xl font-bold">Edit rooms</h1>
         <div class="divider"></div>
         <form @submit.prevent="handleSubmit">
-            <!-- {{ form.errors["TimeRanges1"] }} -->
             <div class="form-control w-full">
                 <label class="label">
                     <span class="label-text">Nama Rooms</span>
@@ -51,6 +50,17 @@
             </div>
             <div class="form-control w-full">
                 <label class="label ">
+                    <span class="label-text">
+                        Maksimal size upload (kb)
+                    </span>
+                </label>
+                <input type="number" v-model="form.max_size" placeholder="Masukan maksimal size upload (kb)"
+                    class="input input-bordered w-full" />
+                <p class="text-red-500 text-sm" v-if="form.errors.max_size">{{ form.errors.max_size }}</p>
+
+            </div>
+            <div class="form-control w-full">
+                <label class="label ">
                     <span class="label-text">Option Extensions note:pisahkan dengan (,)</span>
                 </label>
                 <input type="text" v-model="form.extensions"
@@ -74,6 +84,7 @@
                 </label>
                 <select class="select select-bordered w-full" v-model="form.operator">
                     <option disabled selected>Pilih operator</option>
+                    <option :value="null">Tidak ada Operator</option>
                     <option v-for="operator in operators" :value="operator.id" :key="operator.id">{{ operator.name }}
                     </option>
                 </select>
@@ -131,6 +142,7 @@ export default {
                 extensions: null,
                 folder: null,
                 type_field: false,
+                max_size: null,
                 ftp: null,
                 operator: null
             }),
@@ -146,6 +158,7 @@ export default {
         this.form.mata_kuliah = this.room.mata_kuliah
         this.form.type_field = this.room.type_field == 1 ? true : false
         this.form.ftp = this.room.ftp
+        this.form.max_size = this.room.max_size
         this.form.operator = this.room.operator_id
     },
     methods: {

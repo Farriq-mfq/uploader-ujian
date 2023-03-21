@@ -68,7 +68,13 @@ class UploaderController extends Controller
             if ($room->type_field) {
                 $data = [...$data, "type" => $request->type];
             }
-
+            $getSize = 0;
+            foreach ($request->file('files') as $file) {
+                $getSize += $file->getSize();
+            }
+            if (round($getSize / 1024) >= $room->max_size) {
+                return redirect()->back()->withErrors(['files' => 'Batas upload hanya  ' . $room->max_size . 'kb']);
+            }
             $insertUpload = $room->uploads()->create($data);
             if ($insertUpload) {
                 $zip = new \ZipArchive();
@@ -114,6 +120,11 @@ class UploaderController extends Controller
             } else {
                 $single_file =   $nama_file_format_2 . "." . $extension;
             }
+            $getSize = $request->file('files')[0]->getSize();
+            if (round($getSize / 1024) >= $room->max_size) {
+                return redirect()->back()->withErrors(['files' => 'Batas upload hanya  ' . $room->max_size . 'kb']);
+            }
+
             $data = [
                 'name' => $request->name,
                 'nim' => $request->nim,
@@ -123,6 +134,7 @@ class UploaderController extends Controller
             if ($room->type_field) {
                 $data = [...$data, "type" => $request->type];
             }
+
             if ($room->ftp) {
                 try {
                     if (preg_match("/ftp:\/\/(.*?):(.*?)@(.*?)(\/.*)/i", $room->ftp, $match)) {
@@ -147,7 +159,9 @@ class UploaderController extends Controller
                     return redirect()->back()->withErrors(['ftp' => 'Error : ' . $ex->getMessage()]);
                 }
             } else {
-                Storage::putFileAs($room->folder, $request->file('files')[0], $single_file);
+                if ($room->uploads()->create($data)) {
+                    Storage::putFileAs($room->folder, $request->file('files')[0], $single_file);
+                }
             }
         }
     }
@@ -155,6 +169,5 @@ class UploaderController extends Controller
     {
         $find = $this->attch->with('room')->find($attch);
         return response()->download(storage_path("app/attch/" . $find->room->name . "/" . $find->file));
-        // dd(Storage::download("attch/" . $find->room->name . "/" . $find->file));
     }
 }

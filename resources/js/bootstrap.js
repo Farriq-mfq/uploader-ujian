@@ -8,21 +8,21 @@ import axios from "axios";
 window.axios = axios;
 
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
-document.addEventListener("contextmenu", (e) => e.preventDefault());
-function ctrlShiftKey(e, keyCode) {
-    return e.ctrlKey && e.shiftKey && e.keyCode === keyCode.charCodeAt(0);
-}
+// document.addEventListener("contextmenu", (e) => e.preventDefault());
+// function ctrlShiftKey(e, keyCode) {
+//     return e.ctrlKey && e.shiftKey && e.keyCode === keyCode.charCodeAt(0);
+// }
 
-document.onkeydown = (e) => {
-    if (
-        event.keyCode === 123 ||
-        ctrlShiftKey(e, "I") ||
-        ctrlShiftKey(e, "J") ||
-        ctrlShiftKey(e, "C") ||
-        (e.ctrlKey && e.keyCode === "U".charCodeAt(0))
-    )
-        return false;
-};
+// document.onkeydown = (e) => {
+//     if (
+//         event.keyCode === 123 ||
+//         ctrlShiftKey(e, "I") ||
+//         ctrlShiftKey(e, "J") ||
+//         ctrlShiftKey(e, "C") ||
+//         (e.ctrlKey && e.keyCode === "U".charCodeAt(0))
+//     )
+//         return false;
+// };
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening

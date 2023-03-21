@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Room extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'time_start', 'time_end', 'folder', 'status', "extensions", "mata_kuliah", "kelas", "type_field", "ftp", "operator_id"];
+    protected $fillable = ['name', 'time_start', 'time_end', 'folder', 'status', "extensions", "mata_kuliah", "kelas", "type_field", "ftp", "operator_id", "max_size"];
     protected $guarded = ['id'];
 
     public function scopeActive($query, $status, $id)
