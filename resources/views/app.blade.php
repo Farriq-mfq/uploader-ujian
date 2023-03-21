@@ -12,8 +12,8 @@
     @inertiaHead
 </head>
 
-<body class="font-sans antialiased bg-base-200 min-h-screen">
-{{-- <body class="font-sans antialiased bg-base-200 min-h-screen" oncontextmenu="return false"> --}}
+<body class="font-sans antialiased bg-base-200 min-h-screen dark:bg-slate-900">
+    {{-- <body class="font-sans antialiased bg-base-200 min-h-screen dark:bg-slate-900" oncontextmenu="return false"> --}}
     @inertia
 </body>
 

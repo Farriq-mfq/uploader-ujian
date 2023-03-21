@@ -9,7 +9,7 @@
             </div>
             <div v-else class="grid place-items-center first-letter gap-2">
                 <CloudArrowUpIcon class="text-primary h-24" />
-                <p class=" text-center text-gray-500 font-semibold leading-tight">Drag 'n' drop disini, atau <br><span
+                <p class=" text-center text-gray-500 font-semibold leading-tight dark:text-white">Drag 'n' drop disini, atau <br><span
                         class="divider">Atau</span>
                 <div
                     class="bg-primary p-2 rounded-lg text-white cursor-pointer btn border-none font-bold leading-tight hover:bg-blue-500/90 btn-block text-sm">
@@ -17,7 +17,7 @@
                 </p>
             </div>
         </div>
-        <p class="text-gray-500 font-semibold leading-tight text-sm">
+        <p class="text-gray-500 font-semibold leading-tight text-sm dark:text-white">
             {{ message }}
         </p>
     </div>

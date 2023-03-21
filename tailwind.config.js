@@ -19,4 +19,5 @@ module.exports = {
         prefix: "",
         darkTheme: "dark",
     },
+    darkMode: "class",
 };

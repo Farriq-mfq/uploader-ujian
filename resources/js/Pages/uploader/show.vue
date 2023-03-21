@@ -26,9 +26,11 @@
     </Head>
     <div class="mockup-window relative bg-base z-50 border shadow-md" v-if="room && !expired && !startTime">
         <div
-            class="shadow-sm text-4xl font-semibold text-gray-700 justify-self-center bg-primary/10 border-2 w-fit absolute lg:top-14 top-0 lg:right-5 right-0 grid place-items-center gap-2 rounded-lg">
-            <div class="text-sm text-white bg-primary font-bold leading-tight w-full h-10 grid place-items-center px-4">
+            class="shadow-sm text-4xl font-semibold text-gray-700 justify-self-center bg-primary/10 border-2 w-fit absolute lg:top-14 top-0 lg:right-5 right-0 grid place-items-center gap-2 rounded-lg overflow-hidden">
+            <div
+                class="text-sm text-white bg-primary font-bold leading-tight w-full h-10 flex space-x-2 place-items-center px-4">
                 <h5 class="uppercase">Sisa Waktu Upload</h5>
+                <input type="checkbox" class="toggle toggle-sm" :checked="checkDark" @change="handleChangeTheme" />
             </div>
             <vue-countdown class="p-5" :time="UploadTime" @end="handleEnd" :interval="1000"
                 v-slot="{ days, hours, minutes, seconds }">
@@ -47,26 +49,28 @@
                         <h3 class="font-bold mb-2 uppercase">Attchments</h3>
                         <Attch v-for="attch in room.attchs" :key="attch.id" :attch="attch" />
                     </div>
-                    <h3 class="font-bold uppercase">
+                    <h3 class="font-bold uppercase dark:text-white">
                         Room {{ room.name }}
                     </h3>
 
                     <form @submit.prevent="handleUpload">
                         <div class="my-2 w-full">
                             <input :disabled="form.processing" type="text" v-model="form.name" placeholder="Masukan Nama"
-                                class="input input-bordered w-full " />
+                                class="input input-bordered w-full dark:bg-slate-700 dark:text-white" />
                             <p class="text-red-500 text-sm" v-if="form.errors.name">{{ form.errors.name }}</p>
                         </div>
                         <div class="my-2 w-full">
                             <input :disabled="form.processing" type="text" v-model="form.nim" placeholder="NIM"
-                                class="input input-bordered w-full " />
+                                class="input input-bordered w-full dark:bg-slate-700 dark:text-white" />
                             <p class="text-red-500 text-sm" v-if="form.errors.nim">{{ form.errors.nim }}</p>
                         </div>
                         <div v-if="room.type_field" class="mb-4">
                             <div class="my-2">
-                                <label class="text-sm">Pilih Type Soal</label>
+                                <label class="text-sm dark:text-white">Pilih Type Soal</label>
                             </div>
-                            <select :disabled="form.processing" class="select w-full select-bordered" v-model="form.type">
+                            <select :disabled="form.processing"
+                                class="select w-full select-bordered dark:bg-slate-700 dark:text-white" v-model="form.type">
+                                <option disabled selected>Pilih Type Soal</option>
                                 <option value="A">A</option>
                                 <option value="B">B</option>
                             </select>
@@ -94,7 +98,9 @@
                                 :disabled="form.processing || form.name == null || form.nim == null || !form.files.length || submit_count >= 3"
                                 type="submit"
                                 :class="`btn btn-primary disabled:bg-primary/50 text-sm border-none font-bold leading-tight btn-block  disabled:text-white ${form.processing ? `loading` : ``}`">{{
-                                    submit_count >= 3 ? "Reloading..." : form.processing ? "Uploading..." : "Upload" }} <CloudArrowUpIcon class="h-5 ml-2 animate-bounce" v-if="form.processing" /></button>
+                                    submit_count >= 3 ? "Reloading..." : form.processing ? "Uploading..." : "Upload" }}
+                                <CloudArrowUpIcon class="h-5 ml-2 animate-bounce" v-if="form.processing" />
+                            </button>
                             <button v-if="form.processing" type="button" @click="handleCencel"
                                 :class="`btn btn-error border-none font-bold leading-tight hover:bg-red-500 btn-block text-sm disabled:bg-red-400 disabled:text-white`">Batal</button>
                         </div>
@@ -114,7 +120,7 @@
                     <ArrowPathIcon class="h-5" />
                     &nbsp;Refresh
                 </button>
-                <table class="table w-full rounded-none" v-if="room.uploads.length">
+                <table class="table w-full rounded-none dark:text-white" v-if="room.uploads.length">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -122,7 +128,7 @@
                             <th>Nama</th>
                             <th>File</th>
                             <th v-if="room.type_field">Type</th>
-                            <th>Tanggal</th>
+                            <th>TimesTamps</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -134,9 +140,9 @@
                             <td>{{ upload.file }}</td>
                             <td v-if="room.type_field">{{ upload.type }}</td>
                             <td>
-                                <div class="badge badge-primary">{{ new Date(upload.created_at).getFullYear() }}/{{ new
-                                    Date(upload.created_at).getMonth()
-                                }}/{{ new Date(upload.created_at).getDate() }}</div>
+                                <div class="badge badge-primary">
+                                    {{ upload.created_at.split("T")[0] }}
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -150,7 +156,7 @@
     </div>
 </template>
 <script>
-import { InboxIcon, ArrowPathIcon ,CloudArrowUpIcon} from '@heroicons/vue/24/solid';
+import { InboxIcon, ArrowPathIcon, CloudArrowUpIcon } from '@heroicons/vue/24/solid';
 import { Head, useForm } from '@inertiajs/vue3';
 import Attch from '../../components/Attch.vue';
 import ListFile from '../../components/ListFile.vue';
@@ -168,7 +174,7 @@ export default {
         InboxIcon,
         PlayRandomImg,
         Attch,
-        Head, ArrowPathIcon,CloudArrowUpIcon
+        Head, ArrowPathIcon, CloudArrowUpIcon
     },
     props: {
         room: Object | null,
@@ -188,6 +194,13 @@ export default {
         UploadTimeStart() {
             return this.timeStart - this.now
         },
+        checkDark() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                return true
+            } else {
+                return false
+            }
+        }
     },
     setup(props) {
         if (props.room) {
@@ -207,7 +220,7 @@ export default {
                 type: null,
                 files: [],
             }),
-            submit_count: 0
+            submit_count: 0,
         };
     },
     methods: {
@@ -249,8 +262,28 @@ export default {
         },
         handleReload() {
             router.reload({ only: ['room'] })
+        },
+        handleChangeTheme(e) {
+            if (e.target.checked) {
+                document.documentElement.classList.add('dark')
+                localStorage.setItem('theme', 'dark')
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark')
+                localStorage.setItem('theme', 'light')
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
         }
-    }
+    },
+    mounted() {
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark')
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    },
 
 }
 </script>
@@ -263,6 +296,6 @@ table {
 
 table th,
 td {
-    @apply bg-white py-8 dark:bg-slate-800 border-y shadow-lg border-gray-300 last-of-type:rounded-r-2xl first-of-type:rounded-l-2xl first-of-type:border-l last-of-type:border-r;
+    @apply bg-white py-8 dark:bg-slate-800 border-y shadow-lg dark:shadow-none border-gray-300 last-of-type:rounded-r-2xl first-of-type:rounded-l-2xl first-of-type:border-l last-of-type:border-r;
 }
 </style>
