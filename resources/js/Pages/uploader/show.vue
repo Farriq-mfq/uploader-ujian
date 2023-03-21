@@ -1,7 +1,7 @@
 <template >
     <div v-if="room && startTime" class="w-full min-h-[80vh] grid place-items-center">
 
-        <div class="max-w-xl bg-white w-full shadow-sm rounded-lg p-3 border flex items-center space-x-2 justify-center">
+        <div class="max-w-xl bg-white w-full shadow-sm rounded-lg p-3 border grid text-center lg:flex items-center space-x-2 justify-center">
             <div class="font-mono text-md text-gray-600 uppercase font-bold">
                 Ujian di mulai
             </div>
