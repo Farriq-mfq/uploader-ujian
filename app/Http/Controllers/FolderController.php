@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\HandleRemoveFile;
 use App\Models\Room;
 use App\Models\Upload;
 use Illuminate\Http\Request;
@@ -46,7 +47,9 @@ class FolderController extends Controller
                             $zip->close();
                         }
                     }
-                    return Response::download(storage_path('app/' . $folder_name), $folder_name, ['Content-Type: application/zip']);
+                    $response = Response::download(storage_path('app/' . $folder_name), $folder_name, ['Content-Type: application/zip']);
+                    dispatch(new HandleRemoveFile($folder_name))->afterResponse();
+                    return $response;
                 } else {
                     return redirect()->back();
                 }

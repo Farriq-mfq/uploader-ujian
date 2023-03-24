@@ -204,7 +204,7 @@ export default {
             })
         },
 
-        handleDelete(e, id) {
+        handleDelete(id) {
             const app = this;
             Swal.fire({
                 title: 'Yakin ?',
@@ -220,15 +220,13 @@ export default {
                     this.$inertia.delete(this.$route('rooms.destroy', id), {}, {
                         preserveState: true, preserveScroll: true,
                         onSuccess: () => {
-                            console.log(e.target);
                             Swal.fire(
                                 'Berhasil!',
-                                'Berhasil menghapus rooms.',
+                                'Berhasil menghapus room.',
                                 'success'
                             )
                         },
                         onError: (err) => {
-                            app.loading_index = -1;
                             app.toast(err)
                         },
                     })
