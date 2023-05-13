@@ -2,8 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
@@ -41,6 +44,18 @@ class HandleInertiaRequests extends Middleware
     {
         return array_merge(parent::share($request), [
             'auth' => fn () => $request->user() ?? null,
+            'db_name' => fn () => DB::connection()->getDatabaseName(),
+            'check_db_is_connected' => function (): bool {
+                try {
+                    DB::connection()->getPdo();
+                    return true;
+                } catch (\PDOException $e) {
+                    return false;
+                }
+            },
+            'get_db_name' => function () {
+                return Config::get('database.connections.mysql.database');
+            }
         ]);
     }
 }

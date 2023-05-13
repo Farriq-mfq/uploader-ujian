@@ -4,7 +4,10 @@
         <Head>
             <title>Edit Rooms</title>
         </Head>
-        <h1 class="text-xl font-bold">Edit rooms</h1>
+        <div>
+            <Link :href="$route('rooms.index')" method="get" class="mb-3 btn btn-primary btn-sm">Kembali</Link>
+            <h1 class="text-xl font-bold">Edit rooms</h1>
+        </div>
         <div class="divider"></div>
         <form @submit.prevent="handleSubmit">
             <div class="form-control w-full">
@@ -114,13 +117,15 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import { MinusIcon, PlusIcon } from '@heroicons/vue/24/solid'
 import { Head, useForm } from '@inertiajs/vue3';
 import { useToast } from "vue-toastification";
+import { Link } from '@inertiajs/vue3';
+
 export default {
     layout: BaseLayout,
     components: {
         VueDatePicker,
         PlusIcon,
         MinusIcon,
-        Head
+        Head,Link
     },
     props: {
         errors: Object,

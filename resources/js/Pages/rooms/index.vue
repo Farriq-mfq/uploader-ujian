@@ -169,7 +169,7 @@ export default {
             }).then((result) => {
                 if (result.isConfirmed) {
                     this.$inertia.post(this.$route('rooms.batch_remove'), {}, {
-                        preserveState: true, onSuccess: () => {
+                        preserveState: false, onSuccess: () => {
                             Swal.fire(
                                 'Berhasil!',
                                 'Berhasil menghapus semua rooms.',
