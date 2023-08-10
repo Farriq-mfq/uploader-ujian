@@ -16,7 +16,7 @@ help upload exam results during practice exams
   ```
   php artisan key:generate
   ```
-## Fitur 
+## Feature
 - Multiple rooms / exam uploader
 - ftp connected 
 - storage management 
